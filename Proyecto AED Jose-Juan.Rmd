@@ -1,0 +1,211 @@
+---
+title: "Proyecto Final AED Jose-Juan"
+output:
+  rmdformats::material:
+    highlight: kate
+    self_contained: true
+    code_folding: show
+    thumbnails: true
+    gallery: true
+    fig_width: 4
+    fig_height: 4
+    df_print: kable
+pkgdown:
+  as_is: true    
+---
+
+
+# Contexto
+A finales del 2019 en el mes de diciembre, Wuhan, China se convirtió en el epicentro de un brote de neumonía de etiología desconocida que no cedía ante tratamientos actualmente utilizados. En pocos días los contagios aumentaron exponencialmente, no solo en China Continental sino también en diferentes países. El agente causal fue identificado, un nuevo coronavirus (2019-nCoV) posteriormente clasificado como SARS-CoV2 causante de la enfermedad COVID-19. El 11 de marzo del 2020 la Organización Mundial de Salud declara a esta enfermedad como una pandemia. 
+
+La presente revisión tiene como finalidad estudiar acerca de **cómo esta situación de pandemia afectó el rendimiento de los equipos de fútbol durante sus juegos de local, particularmente en la Súperliga de fútbol de Grecia**, considerando el hecho de que los partidos se jugaron a puerta cerrada.
+
+Si bien nos ocuparemos en un futuro de revisar además un modelo estadístico para medir el efecto de jugar a puerta cerrada, durante situación de pandemia, sobre la ventaja de jugar de local, **en esta   etapa cubrimos lo estrictamente concerniente al *análisis exploratorio de los datos* inputados al respecto de nuestra pregunta de investigación**.
+
+## Superliga de Grecia  {.tabset .tabset-fade .tabset-pills}
+
+La Superliga de Grecia (en griego, Ελληνική Σούπερ Λίγκα) es una competición entre clubes de fútbol de Grecia. Es la primera división del fútbol griego.
+
+
+### Historia
+
+El primer campeonato griego funcionó entre 1906 y 1913 bajo la organización de la Federación Griega de Gimnasia (SEGAS), con sede en Atenas. Posteriormente, bajo el paraguas de la EPSE, precusora de la actual Federación Helénica de Fútbol, la EPO, se disputaron varios campeonatos regionales.
+
+En 1927 la EPO puso en marcha el primer campeonato nacional considerado oficial, el Campeonato Panhelénico. En este torneo solo tomaban parte equipos de Atenas, El Pireo, Tesalónica y Patras. Se disputaban simultáneamente varias ligas regionales y posteriormente los campeones locales se enfrentaban entre sí en una liguilla final.
+
+En 1959 el campeonato pasó a ser profesional, y se abandonó el formato regional para crear una única liga nacional. La primera división (Nivel I) era la Alpha Ethniki (en español: División A), aunque en la temporada 2006/07 cambió ese nombre por el actual Superliga.
+
+### Sistema de competición
+
+La Federación Helénica de Fútbol organiza este torneo de liga, compuesto de 16 clubes. Todos deben enfrentarse entre sí, en dos ocasiones, y el sistema de puntuación es el siguiente: tres puntos para el vencedor de un partido, cero puntos para el perdedor de un partido y en caso de que dos equipos hayan empatado un partido, se les compensa con un punto para cada uno. La Superliga otorga dos plazas para la UEFA Champions League (campeón y subcampeón) y dos para la UEFA Europa League (tercero y cuarto), además de la del campeón de la Copa de Grecia.
+
+Al final, el que sume más puntos, ya finalizado el certamen, es el campeón nacional.
+
+Hasta 2017, se disputaba al acabar el campeonato una liguilla entre los equipos situados entre la segunda y la quinta plaza para determinar la plaza restante de UEFA Champions League y las dos de UEFA Europa League que tiene Grecia, pero a partir de la temporada 2017/18 se ha eliminado, otorgándose estas plazas según la clasificación en liga.
+
+El último y el penúltimo clasificado de la tabla general desciende a la segunda división, la Super League Greece 2.
+
+### Temporada 2021-2022
+La temporada 2021-22 es la edición número 85 de la Superliga de Grecia. La misma comenzó el 11 de septiembre de 2021 y terminará en mayo de 2022. Olympiakos es el campeón defensor.
+
+A continuación se muestra la lista de clubes que compiten en la Superliga 2021-22, con su respectiva ubicación y estadio.
+
+Equipo              | Ciudad       | Estadio                          | Capacidad
+------------------- | ------------ | -------------------------------  | ----------
+AEK Atenas          | Atenas       | Estadio Olímpico de Atenas       | 69.618
+Apollon Smyrnis     | Atenas       | Georgios Kamaras Stadium         | 14.200
+Aris Thess          | Thessaloniki | Estadio Kleanthis Vikelidis      |	22.800
+Asteras Trípoli     | Trípoli      | Estadio Theodoros Kolokotronis	  |  7.442
+Atromitos           | Peristeri    | Estadio Peristeri                |  9.050
+Lamia               | Lamía        | Estadio Municipal de Lamia       |  5.500
+OFI                 | Heraklion    | Estadio Theodoros Vardinogiannis |  9.088
+Olympiakos          | Piraeus      | Estadio Georgios Karaiskakis    | 32.115
+Panathinaikos       | Atenas       | Estadio Apostolos Nikolaidis     | 16.620
+Panetolikos         | Agrinio      | Estadio Panetolikos              |  7.321
+PAOK Salónica       | Thessaloni   | Estadio La Tumba                 | 28.703
+PAS Gianni          | Ioannina     | Estadio Zosimades                |  7.652
+Volos               | Volos        | Estadio Panthessaliko            | 22.700
+
+
+	
+
+
+# Scripts requeridos para el análisis
+
+## Carga de paquetes y funciones
+
+```{r message=FALSE}
+library(readxl)
+library(reshape2)
+library(dplyr)
+library(e1071)
+library(Hmisc)
+library(inspectdf) #este no lo tienen
+library(funModeling) #este no lo tienen
+library(VIM) #este no lo tienen
+library(stringr)
+library(xtable) #este no lo tienen
+library(ggplot2)
+library(directlabels)
+library(scales)
+library(ggthemes)
+library(mice)
+library(BBmisc)
+
+descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
+#FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VARIABLES CONTINUAS
+
+descriptivas2<-function(Continua,Categorías){
+  x1=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){length(na.omit(x))})
+  names(x1)=c("Categoría","Obs")
+  x2=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){min(na.omit(x))})
+  names(x2)=c("Categoría","Mínimo")
+  x3=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){quantile(na.omit(x), prob =0.25)})
+  names(x3)=c("Categoría","1er Q")
+  x4=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){median(na.omit(x))})
+  names(x4)=c("Categoría","Mediana")
+  x5=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){mean(na.omit(x))})
+  names(x5)=c("Categoría","Media")
+  x6=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){quantile(na.omit(x), prob =0.75)})
+  names(x6)=c("Categoría","3er Q")
+  x7=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){max(na.omit(x))})
+  names(x7)=c("Categoría","Máximo")
+  x8=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){sd(na.omit(x))})
+  names(x8)=c("Categoría","Desv Est")
+  x9=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){skewness(na.omit(x))})
+  names(x9)=c("Categoría","Asimetría")
+  x10=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){kurtosis(na.omit(x))})
+  names(x10)=c("Categoría","Curtosis")
+  cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)[,-seq(3,19,2)]
+}
+#FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VARIABLES CONTINUAS EN SUBMUESTRAS
+  
+tabla_freq<- function(x,total=1,na="ifany"){
+  if (total==1) {
+    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",sum(M$`Freq. Abs.`),sum(M$`Freq. Rel.`))
+    M$`Freq. Rel.`=as.numeric(M$`Freq. Rel.`)
+    M$`Freq. Abs.`=as.numeric(M$`Freq. Abs.`)
+    M
+  } else{
+    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+    M
+  }
+}
+#FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VAR DISCRETAS
+
+tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
+  if (prop==0) {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoría=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    M
+  } else if (prop==1 & suma=="filas") {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoría=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    for (i in 2:ncol(M)) {
+      M[,i]=M[,i]/M[,ncol(M)]
+    }
+    M
+  } else {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoría=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    for (i in 1:nrow(M)) {
+      M[i,2:ncol(M)]=M[i,2:ncol(M)]/M[nrow(M),2:ncol(M)]
+    }
+    M 
+  }
+}
+```
+
+# Carga de los datos e identificación de la estructura de los datos
+
+Se carga el archivo "Grecia.xlsx" el cual contiene el dataset de los partidos jugados en grecia.
+Se busca identificar: ¿que variables estan disponibles y que tipo de variables son?
+```{r}
+base=read_excel("Grecia.xlsx")
+str(base)
+```
+
+# Detección de anomalías
+
+### 1. Formato de las variables no coincide con su tipo de variable
+```{r}
+base$HomeTeam = factor(base$HomeTeam)
+base$AwayTeam = factor(base$AwayTeam)
+base$FTR = factor(base$FTR)
+base$HTR = factor(base$HTR)
+```
+
+### 2. Valores de variables no validas
+
+Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
+Aunque 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana.
+```{r}
+tabla_freq(base$FTHG)
+```
+
+Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del visitante al terminar el partido).
+```{r}
+tabla_freq(base$FTAG)
+```
