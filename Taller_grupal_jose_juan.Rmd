@@ -185,3 +185,4 @@ tabla_freq(base$meta_ingles_cumplida)
 base$ESTU_FECHANACIMIENTO= as.Date(base$ESTU_FECHANACIMIENTO, format="%d/%m/%Y")
 base$edad = floor(as.numeric(difftime(as.Date("9/09/2016", format="%d/%m/%Y"),base$ESTU_FECHANACIMIENTO, units = "weeks"))/52.25)
 ```
+Prueba
