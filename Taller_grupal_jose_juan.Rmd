@@ -1,10 +1,13 @@
 ---
-title: "Proyecto Final AED Jose-Juan"
+title: "Prueba Saber TyT 2016-2"
+subtitle: "Análisis de rresultados"
+author: "Institución Educando Líderes - Dpto. Estadísticas e información institucional"
+date: "`r Sys.Date()`"
 output:
   rmdformats::material:
     highlight: kate
     self_contained: true
-    code_folding: show
+    code_folding: hide
     thumbnails: true
     gallery: true
     fig_width: 4
@@ -13,34 +16,69 @@ output:
 pkgdown:
   as_is: true    
 ---
+```{r global_options, echo=FALSE}
+knitr::opts_chunk$set(fig.path="", message=FALSE, warning=FALSE,
+                      echo=FALSE, results="show", fig.width=11)
+```
+# Contexto 
+
+![](logoIEL.jpg)
+
+## El presente informe
+Este es un informe de análisis de resultados del Examen Saber TyT, realizado por el departamento de estadísticas e información institucional de la Institución Educando Líderes, con el cual ofrecemos un panorama general del desempeño del país en el segundo periodo de 2016, desde la perspectiva de nuestra institución.
+
+El informe está dirigido a la comunidad académica de interés tanto en lo concerniente a las conclusiones cómo a las diferentes etapas del proceso de análisis sobre los datos.
+
+La primera etapa del proceso, cubierta en esa edición del informe, consiste en el aseguramiento de la calidad de los datos y, en consecuencia, de la adecuada preparación de los mismos a fin de suministrar un adecuado set de datos para que el análisis de los resultados pueda llevarse a cabo en una segunda etapa. 
 
 
-# Contexto
-Usted trabaja en el departamento de estadísticas e información institucional de la Institución Educando Líderes, la cual ofrece programas de nivel técnico profesional y tecnológico. Se le ha encomendado la misión de analizar los resultados de la Prueba Saber TyT (es la prueba homóloga al Saber Pro, pero aplicada en técnico y tecnológico). Para ello, se le entrega una base de datos que proviene del Icfes (la del periodo 2016)
+## El examen {.tabset .tabset-fade .tabset-pills}
+
+El pasado 9 de septiembre de 2016, el Icfes realizó el Examen de Estado de la Calidad de la Educación Superior, Saber TyT.  
+De acuerdo con la página oficial  (_[link](https://www.icfes.gov.co/web/guest/acerca-del-examen-saber-tyt)_), la prueba está dirigida a la siguiente población:
+
+### Estudiantes de últimos semestres de programas académicos Técnicos y Tecnológicos
+La prueba está dirigida a estudiantes que han aprobado el 75% de los créditos de sus respectivos programas técnicos profesionales y tecnológicos.
+
+### Población en condición de discapacidad
+
+La prueba aplica para población con las siguientes discapacidades:
+
+|Tipo de discapacidad                               |
+|---------------------------------------------------|-
+|Discapacidad física - movilidad                    |
+|Discapacidad auditiva - usuario del castellano     |
+|Discapacidad visual - baja visión irreversible     |
+|Discapacidad visual - ceguera                      |
+|Sordoceguera                                       |
+|Trastorno permanente de la voz y el habla          |
+|Discapacidad intelectual                           |
+|Discapacidad mental/psicosocial                    |
+|Trastorno del espectro autista                     |
+|Trastorno del espectro autista - asperger          |
+|Discapacidad sistémica                             |
+
+### Reclusos
+La prueba aplica para población privada de la libertad, siendo esta presentada en su sitio de reclusión respectivo
+
+### Etnias
+Las siguientes son las categorías étnicas que han sido contempladas para la clasificación de los aplicantes a la prueba.
+
+|Etnias                     |     -                     |
+|---------------------------|---------------------------|
+|Arhuaco                    |Pasto                      |
+|Cancuamo                   |Pijao                      |
+|Comunidad Afrodescendiente |Raizal o Palenquero        |
+|Comunidad Rom (gitana)     |Sikuani                    |
+|Cubeo                      |Tucano                     |
+|Embera                     |Wayúu                      |
+|Guambiano                  |Zenú                       |
+|Huitoto                    |Ninguno                    |
+|Inga                       |Otro                       |
+|Paez                       |                           |
 
 
-
-Su misión entonces es entregar un informe sobre la calidad y la preparación de los datos, de tal manera que el análisis de los resultados pueda llevarse a cabo en una segunda etapa. Si existen anomalías, la idea es que a partir de dicho informe, se construya un derecho de petición al Icfes para informar sobre las anomalías y solicitar información que permita dar solución a los problemas.
-
-
-
-Tenga en cuenta las siguientes recomendaciones:
-
-1. En la columna "ESTU_ESTADO" se especifica si el resultado está listo para ser publicado ("PUBLICAR") o si el resultado está en revisión ("VALIDEZ OFICINA JURÍDICA"). Solo interesa trabajar con los que están listos para publicarse.
-
-2. La base de datos contiene 104 columnas, pero no todas serán relevantes en el análisis. Concéntrese en las columnas 1 a la 15 y 85 a 104.  
-
-3. Para este estudio, solo interesan los estudiantes de nacionalidad colombiana.
-
-4. Los niveles de inglés, según el Icfes, son A1-, A1, A2, B1 y B2, en dicho orden (de izquierda a derecha aumenta el nivel de desempeño). Además, según el Ministerio de Educación Nacional, una institución de educación superior tiene la meta de llevar a sus estudiantes a nivel B1 o B2. Se necesita entonces una nueva columna que identifique si el estudiante cumplió o no esta condición.
-
-5. Se necesita una nueva columna que contenga la edad del estudiante (la fecha de presentación de la prueba fue el 9 de octubre de 2016).
-
-# Scripts requeridos para el análisis
-
-## Carga de paquetes y funciones
-
-```{r message=FALSE}
+```{r Packages and functions, echo=FALSE, message=FALSE, warning=FALSE}
 library(readxl)
 library(reshape2)
 library(dplyr)
@@ -144,45 +182,82 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
 }
 ```
 
-# Carga de los datos e identificación de la estructura de los datos
+# Los Datos 
 
-Se carga el archivo "SABERTYT20162.csv" el cual contiene el dataset.
-```{r}
-base= read.csv(file='SABERTYT20162.csv', header= TRUE, sep=';', na.strings = c("NA",""))
+## Carga inicial de la base de datos
+
+La base de datos sobre la cual realizaremos el análisis fue provista por el Icfes en formato CSV.  
+Archivo: "SABERTYT20162.csv".
+
+```{r echo=FALSE}
+setwd("./")
+base= read.csv(file='SABERTYT20162.csv', encoding="latin1", header= TRUE, sep=';', na.strings = c("NA",""))
 str(base)
 ```
 
-# Filtros al dataset
+## Identificación de la estructura de los datos para el análisis
 
-1. En la columna "ESTU_ESTADO" se especifica si el resultado está listo para ser publicado ("PUBLICAR") o si el resultado está en revisión ("VALIDEZ OFICINA JURÍDICA"). Solo interesa trabajar con los que están listos para publicarse.
-```{r}
-base= base[base$ESTU_ESTADO == "PUBLICAR",]
-unique(base$ESTU_ESTADO)
-```
+Después de analizar la estructura de la base de datos, determinamos:
 
-2. La base de datos contiene 104 columnas, pero no todas serán relevantes en el análisis. Concéntrese en las columnas 1 a la 15 y 85 a 104.  
-```{r}
-ncol(base)
+* De las 104 columnas disponibles,  las características que serán relevantes para este análisis corresponden con las columnas 1 a la 15 y las columnas 85 a 104.  
+* Trabajar sobre los registros de resultados cuyo estado indica que son registros listos para publicar (ESTADO "PUBLICAR") 
+* Analizar los registros correspondientes a los estudiantes de nacionalidad colombiana (PAIS COLOMBIA*).
+
+La base de datos final sobre la cual realizar el análisis es:
+
+```{r echo=FALSE}
 base= base[,c(1:15,85:104)]
-ncol(base)
+base= base[base$ESTU_ESTADO == "PUBLICAR",]
+base= base[base$ESTU_NACIONALIDAD == "1 COLOMBIA",]
+str(base)
 ```
 
-3. Para este estudio, solo interesan los estudiantes de nacionalidad colombiana.
-```{r}
-base= base[base$ESTU_NACIONALIDAD == "1 COLOMBIA",]
-unique(base$ESTU_NACIONALIDAD)
-```
-4. Los niveles de inglés, según el Icfes, son A1-, A1, A2, B1 y B2, en dicho orden (de izquierda a derecha aumenta el nivel de desempeño). Además, según el Ministerio de Educación Nacional, una institución de educación superior tiene la meta de llevar a sus estudiantes a nivel B1 o B2. Se necesita entonces una nueva columna que identifique si el estudiante cumplió o no esta condición.
-```{r}
+> En la validación del dato de nacionalidad pudimos observar que se incluye tanto el código como el nombre del país en el mismo campo, sin embargo, no se observa inconsistencia alguna respecto a este dato, ya que los demás paises están almacenados de manera consistente bajo la estructura "código nombre". 
+
+# Análisis de calidad de los datos
+
+Cómo parte del proceso, nos ocupamos de realizar algunos análisis particulares que compartimos a continuación. 
+
+## Exploración de inconsistencias
+
+### Prueba de niveles de inglés {.tabset .tabset-fade .tabset-pills}
+
+Los niveles de inglés, según el Icfes, son en orden ascendente de acuerdo con el nivel de desempeño:
+
+1. A1-
+2. A1
+3. A2
+4. B1
+5. B2 
+
+En vista de que, según el Ministerio de Educación Nacional, una institución de educación superior tiene la meta de llevar a sus estudiantes a nivel B1 o B2, realizamos una revisión de los datos para identificar el volumen de estudiantes que cumplen o no con esta condición.
+
+```{r nivel de ingles, echo=FALSE, message=FALSE}
 base$MOD_INGLES_DESEM= factor(base$MOD_INGLES_DESEM, levels=c("A1-","A1","A2","B1","B2"))
-### Variable nueva (meta_ingles_cumplida)
+### creamos una nueva Variable (meta_ingles_cumplida)
 base$meta_ingles_cumplida = ifelse(base$MOD_INGLES_DESEM == "B1" | base$MOD_INGLES_DESEM == "B2", "SI", "NO")
 base$meta_ingles_cumplida = factor(base$meta_ingles_cumplida)
 tabla_freq(base$meta_ingles_cumplida)
 ```
-5. Se necesita una nueva columna que contenga la edad del estudiante (la fecha de presentación de la prueba fue el 9 de octubre de 2016).
-```{r}
+Pudimos comprobar que el 13.98% efectivamente cumple con el nivel de inglés esperado.  *No se observan anomalías, a partir del caso.*
+
+### Edad de los estudiantes {.tabset .tabset-fade .tabset-pills}
+
+Agregamos una variable relativa a la edad del estudiante al momento de presentar la prueba, a fin de realizar la caracterización.
+```{r echo=FALSE}
 base$ESTU_FECHANACIMIENTO= as.Date(base$ESTU_FECHANACIMIENTO, format="%d/%m/%Y")
-base$edad = floor(as.numeric(difftime(as.Date("9/09/2016", format="%d/%m/%Y"),base$ESTU_FECHANACIMIENTO, units = "weeks"))/52.25)
+base$edad = round(as.numeric(difftime(as.Date("9/09/2016", format="%d/%m/%Y"),base$ESTU_FECHANACIMIENTO, units = "weeks"))/52.17857, digits = 2)
+summary(base$ESTU_FECHANACIMIENTO)
 ```
-Prueba
+
+
+## Resumen de anomalías {.tabset .tabset-fade .tabset-pills}
+
+Con las anomalías detectadas, procedemos a construir un derecho de petición para dirigirlo al Icfes e informarlas, a fin de solicitar además la información que nos permita dar solución a estos problemas.
+
+
+
+
+# Análisis de resultados
+
+Finalizada la etapa de aseguramiento de la calidad de los datos, hemos iniciado el desarrollo de la actividad de análisis.  Una vez finalice, los resultados serán publicados en este apartado del informe.
