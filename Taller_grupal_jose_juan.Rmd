@@ -99,26 +99,26 @@ library(BBmisc)
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
 #FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VARIABLES CONTINUAS
 
-descriptivas2<-function(Continua,Categorías){
-  x1=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){length(na.omit(x))})
+descriptivas2<-function(Continua,Categorias){
+  x1=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){length(na.omit(x))})
   names(x1)=c("Categoría","Obs")
-  x2=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){min(na.omit(x))})
+  x2=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){min(na.omit(x))})
   names(x2)=c("Categoría","Mínimo")
-  x3=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){quantile(na.omit(x), prob =0.25)})
+  x3=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){quantile(na.omit(x), prob =0.25)})
   names(x3)=c("Categoría","1er Q")
-  x4=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){median(na.omit(x))})
+  x4=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){median(na.omit(x))})
   names(x4)=c("Categoría","Mediana")
-  x5=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){mean(na.omit(x))})
+  x5=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){mean(na.omit(x))})
   names(x5)=c("Categoría","Media")
-  x6=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){quantile(na.omit(x), prob =0.75)})
+  x6=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){quantile(na.omit(x), prob =0.75)})
   names(x6)=c("Categoría","3er Q")
-  x7=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){max(na.omit(x))})
+  x7=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){max(na.omit(x))})
   names(x7)=c("Categoría","Máximo")
-  x8=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){sd(na.omit(x))})
+  x8=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){sd(na.omit(x))})
   names(x8)=c("Categoría","Desv Est")
-  x9=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){skewness(na.omit(x))})
+  x9=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){skewness(na.omit(x))})
   names(x9)=c("Categoría","Asimetría")
-  x10=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){kurtosis(na.omit(x))})
+  x10=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){kurtosis(na.omit(x))})
   names(x10)=c("Categoría","Curtosis")
   cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)[,-seq(3,19,2)]
 }
@@ -126,16 +126,16 @@ descriptivas2<-function(Continua,Categorías){
   
 tabla_freq<- function(x,total=1,na="ifany"){
   if (total==1) {
-    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
-    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
-    M$Categoría=as.character(M$Categoría)
+    M=data.frame("Categoria"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoria","Freq. Abs.","Freq. Rel.")
+    M$Categoria=as.character(M$Categoria)
     M[nrow(M)+1,]=c("Total",sum(M$`Freq. Abs.`),sum(M$`Freq. Rel.`))
     M$`Freq. Rel.`=as.numeric(M$`Freq. Rel.`)
     M$`Freq. Abs.`=as.numeric(M$`Freq. Abs.`)
     M
   } else{
-    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
-    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+    M=data.frame("Categoria"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoria","Freq. Abs.","Freq. Rel.")
     M
   }
 }
@@ -144,20 +144,20 @@ tabla_freq<- function(x,total=1,na="ifany"){
 tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
   if (prop==0) {
     M=as.data.frame.matrix(table(x, y, useNA = na))
-    M$Categoría=row.names(M)
+    M$Categoria=row.names(M)
     rownames(M)=NULL
     M=M[,c(ncol(M),1:ncol(M)-1)]
-    M$Categoría=as.character(M$Categoría)
+    M$Categoria=as.character(M$Categoria)
     M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
     M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
     M$Total=rowSums(M[,2:ncol(M)])
     M
   } else if (prop==1 & suma=="filas") {
     M=as.data.frame.matrix(table(x, y, useNA = na))
-    M$Categoría=row.names(M)
+    M$Categoria=row.names(M)
     rownames(M)=NULL
     M=M[,c(ncol(M),1:ncol(M)-1)]
-    M$Categoría=as.character(M$Categoría)
+    M$Categoria=as.character(M$Categoria)
     M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
     M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
     M$Total=rowSums(M[,2:ncol(M)])
@@ -167,10 +167,10 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
     M
   } else {
     M=as.data.frame.matrix(table(x, y, useNA = na))
-    M$Categoría=row.names(M)
+    M$Categoria=row.names(M)
     rownames(M)=NULL
     M=M[,c(ncol(M),1:ncol(M)-1)]
-    M$Categoría=as.character(M$Categoría)
+    M$Categoria=as.character(M$Categoria)
     M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
     M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
     M$Total=rowSums(M[,2:ncol(M)])
@@ -243,13 +243,42 @@ Pudimos comprobar que el 13.98% efectivamente cumple con el nivel de inglés esp
 
 ### Edad de los estudiantes {.tabset .tabset-fade .tabset-pills}
 
-Agregamos una variable relativa a la edad del estudiante al momento de presentar la prueba, a fin de realizar la caracterización.
+Agregamos una variable relativa a la edad del estudiante al momento de presentar la prueba, a fin de realizar la caracterización.  
+
 ```{r echo=FALSE}
-base$ESTU_FECHANACIMIENTO= as.Date(base$ESTU_FECHANACIMIENTO, format="%d/%m/%Y")
-base$edad = round(as.numeric(difftime(as.Date("9/09/2016", format="%d/%m/%Y"),base$ESTU_FECHANACIMIENTO, units = "weeks"))/52.17857, digits = 2)
-summary(base$ESTU_FECHANACIMIENTO)
+base$edad = round(as.numeric(difftime(as.Date("9/09/2016", format="%d/%m/%Y"),as.Date(base$ESTU_FECHANACIMIENTO, format="%d/%m/%Y"), units = "weeks"))/52.17857, digits = 2)
 ```
 
+Producto de ello, encontramos algunas edades negativas o cero, que nos conducen a concluir una anomalía en las fechas de nacimiento de la base de datos:
+
+```{r echo=FALSE}
+### Revisar las fechas de nacimiento atípicas por cálculo negativo
+tabla_freq(base$edad<=1)
+
+edades_imposibles = base[base$edad <= 1,]
+```
+> Registros con edades negativas o cero
+
+![](Edades2019.jpg)
+> Fuente Informe Icfes.
+
+Adicionalmente, de acuedo con el gráfico anterior, la prueba está caracterizada por el icfes para una población que supera los 15 años, lo cual nos hace suponer que los 22 registros (0,04%)  que indican edades menores a los 15 años, corresponden a anomalías que deben ser verificadas en la fuente y serán incluidas en nuestro informe final. Estos registros sumados a los 52 (0,10%) registros descartados por valores negativos o cero en el cálculo de la edad, representan el 0,14% de la muestra.
+
+```{r echo=FALSE}
+rangos_edad = base[base$edad>=1, c("ESTU_FECHANACIMIENTO","edad")]
+rangos_edad = rangos_edad[!is.na(rangos_edad$edad),]
+rangos_edad$rango_edad = cut(rangos_edad$edad, breaks = c(0, 14.5, 21, 28, 50, 99),
+    labels = c("0-14", "15-20", "21-27", "28-50", "Mas de 50"))
+tabla_freq(rangos_edad$rango_edad)
+ggplot(rangos_edad, aes(x=rango_edad, y=(..count..)/sum(..count..)))+
+  geom_bar(fill="steelblue", color="black")+
+  labs(x="Rango Edad",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,0.5), breaks = seq(0,0.5,0.05), labels=percent)+
+  geom_text(aes(label=percent((..count..)/sum(..count..))), stat='count',vjust=-0.5, fontface = "bold", size=3)+
+  theme_base()
+
+```
+> Distribución de rangos de edades en la prueba
 
 ## Resumen de anomalías {.tabset .tabset-fade .tabset-pills}
 
