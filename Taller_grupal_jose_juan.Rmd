@@ -1,6 +1,6 @@
 ---
 title: "Prueba Saber TyT 2016-2"
-subtitle: "Análisis de rresultados"
+subtitle: "Análisis de resultados"
 author: "Institución Educando Líderes - Dpto. Estadísticas e información institucional"
 date: "`r Sys.Date()`"
 output:
@@ -78,7 +78,7 @@ Las siguientes son las categorías étnicas que han sido contempladas para la cl
 |Paez                       |                           |
 
 
-```{r Packages and functions, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Packages and functions, echo=TRUE, message=FALSE, warning=FALSE}
 library(readxl)
 library(reshape2)
 library(dplyr)
@@ -184,7 +184,7 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
 
 # Los Datos 
 
-## Carga inicial de la base de datos
+## Base de datos (fuente original)
 
 La base de datos sobre la cual realizaremos el análisis fue provista por el Icfes en formato CSV.  
 Archivo: "SABERTYT20162.csv".
@@ -214,13 +214,13 @@ str(base)
 
 > En la validación del dato de nacionalidad pudimos observar que se incluye tanto el código como el nombre del país en el mismo campo, sin embargo, no se observa inconsistencia alguna respecto a este dato, ya que los demás paises están almacenados de manera consistente bajo la estructura "código nombre". 
 
-# Análisis de calidad de los datos
+# Calidad de los datos
 
 Cómo parte del proceso, nos ocupamos de realizar algunos análisis particulares que compartimos a continuación. 
 
-## Exploración de inconsistencias
+## Comprobación de Anomalías {.tabset .tabset-fade .tabset-pills}
 
-### Prueba de niveles de inglés {.tabset .tabset-fade .tabset-pills}
+### Prueba de niveles de inglés 
 
 Los niveles de inglés, según el Icfes, son en orden ascendente de acuerdo con el nivel de desempeño:
 
@@ -286,10 +286,99 @@ ggplot(rangos_edad, aes(x=rango_edad, y=(..count..)/sum(..count..)))+
 
 Estos 22 registros sumados a los 52 (0,10%) registros descartados por valores negativos o cero en el cálculo de la edad, representan tan solo el 0,14% de la muestra.
 
-# Comprobación de anomalías {.tabset .tabset-fade .tabset-pills}
+### Etnias
+
+|Etnias                     |     -                     |
+|---------------------------|---------------------------|
+|Arhuaco                    |Pasto                      |
+|Cancuamo                   |Pijao                      |
+|Comunidad Afrodescendiente |Raizal o Palenquero        |
+|Comunidad Rom (gitana)     |Sikuani                    |
+|Cubeo                      |Tucano                     |
+|Embera                     |Wayúu                      |
+|Guambiano                  |Zenú                       |
+|Huitoto                    |Ninguno                    |
+|Inga                       |Otro                       |
+|Paez                       |                           |
+
+> Etnias, diccionario de datos de la variable. Fuente: portal del Icfes.
+
+```{r echo=FALSE}
+unique(base$ESTU_ETNIA)
+```
+> Etnias, ocurrencias en la base de datos del análisis
+
+En primera instancia confirmamos que no observamos valores inválidos o sin referencia en el diccionario de datos de la variable. 
+
+```{r echo=FALSE}
+base$ESTU_TIENE_ETNIA = factor(base$ESTU_TIENE_ETNIA, levels=c("SI","NO"))
+tabla_freq(base$ESTU_TIENE_ETNIA)
+```
+> Distribución de categorías con etnia
+
+```{r echo=FALSE}
+base_etnias = base[base$ESTU_TIENE_ETNIA == "SI" & !is.na(base$ESTU_TIENE_ETNIA), c("ESTU_TIENE_ETNIA", "ESTU_ETNIA")]
+
+base_etnias = base_etnias[order(base_etnias$ESTU_TIENE_ETNIA, base_etnias$ESTU_ETNIA), ]
+tabla_freq( base_etnias$ESTU_ETNIA)
+```
+> Distribución de Etnias de la categorías con etnia SI
+
+Observamos que los 3.276 registros clasificados con etnia SI, 3.010 contienen su respectivo registro étnico y 266 no lo tienen (NA).  Esta es una anomalía que debe corregirse antes de emprender el análisis.
+
+
+```{r echo=FALSE}
+base_etnias = base[base$ESTU_TIENE_ETNIA == "NO" & !is.na(base$ESTU_TIENE_ETNIA), c("ESTU_TIENE_ETNIA", "ESTU_ETNIA")]
+tabla_freq( base_etnias$ESTU_ETNIA)
+```
+> Distribución de categorías con etnia NO
+
+Observamos que los 45.098 registros clasificados como que NO tienen etnia, 76 contienen registro étnico, lo cuál es una inconsistencia que debería ser corregida clasificándolos como que SI tiene etnia.
+
+```{r echo=FALSE}
+base_etnias_corregidas = base[!is.na(base$ESTU_ETNIA), c("ESTU_TIENE_ETNIA", "ESTU_ETNIA")]
+tabla_freq( base_etnias_corregidas$ESTU_ETNIA)
+```
+
+> Distribución de categorías con etnia SI, a partir del análisis anterior
+
+En total serán 3.086 resgistros clasificados como que SI tienen etnia y coinciden con su respectivo registro de clasificación étnica.
+
+
+## Corrección de anomalías  {.tabset .tabset-fade .tabset-pills}
 
 Con las anomalías detectadas, procedemos a construir un derecho de petición para dirigirlo al Icfes e informarlas, a fin de solicitar además la información que nos permita dar solución a estos problemas.
 
+Para proseguir con el proceso, procedemos a corregir las anomalías sin depender de la investigación anteriormente mencionada.
+
+### Missing values 
+
+```{r echo=FALSE}
+inspect_na(base)
+```
+Realizamos la validación de _missing values_ sobre de los campos trabajados hasta el momento
+
+```{r echo=FALSE}
+base_completa = base[ , c("MOD_INGLES_DESEM","ESTU_FECHANACIMIENTO", "ESTU_TIENE_ETNIA", "ESTU_ETNIA", "ESTU_LIMITA_CONDICIONESPECIAL","ESTU_LIMITA_SORDO","ESTU_LIMITA_INVIDENTE","ESTU_LIMITA_MOTRIZ", "ESTU_LIMITA_AUTISMO")] 
+capture.output(aggr(base_completa, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.6, cex.numbers = 0.6, labels=c("D_INGLES","F_NCMTO", "T_ETNIA", "ETNIA", "L_CNDESP","L_SORDO","L_INVID","L_MOTRIZ", "L_AUTISM")), file=tempfile())
+
+
+
+```
+
+### Etnias {.tabset .tabset-fade .tabset-pills}
+
+1.- Corregimos registros que indican NO tiene etnia y tienen registro válido en etnia.  Ahora quedan con SI tiene etnia.
+2.- Corregimos registros que indican SI tiene etnia, sin embargo tienen NA en etnia.  Ahora quedan con NA en si tienen etnia.
+3.- Registros con NA en tiene etnia, son consistentes con NA en etnia.
+
+```{r echo=TRUE}
+### Corrección "TIENE ETNIA" NO con registro de ETNIA --->  "TIENE ETNIA" SI
+base$ESTU_TIENE_ETNIA[base$ESTU_TIENE_ETNIA=="NO" & !is.na(base$ESTU_ETNIA)] = "SI"
+### Corrección "TIENE ETNIA" SI con registro de ETNIA NA --->  "TIENE ETNIA" NA
+base$ESTU_TIENE_ETNIA[base$ESTU_TIENE_ETNIA=="SI" & is.na(base$ESTU_ETNIA)] = NA
+tabla_freq(base$ESTU_TIENE_ETNIA)
+```
 
 
 # Análisis de resultados
