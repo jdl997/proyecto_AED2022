@@ -239,6 +239,8 @@ base$meta_ingles_cumplida = ifelse(base$MOD_INGLES_DESEM == "B1" | base$MOD_INGL
 base$meta_ingles_cumplida = factor(base$meta_ingles_cumplida)
 tabla_freq(base$meta_ingles_cumplida)
 ```
+> Tabla de frecuencia cumplimiento nivel de inglés
+
 Pudimos comprobar que el 13.98% efectivamente cumple con el nivel de inglés esperado.  *No se observan anomalías, a partir del caso.*
 
 ### Edad de los estudiantes {.tabset .tabset-fade .tabset-pills}
@@ -257,12 +259,13 @@ tabla_freq(base$edad<=1)
 
 edades_imposibles = base[base$edad <= 1,]
 ```
-> Registros con edades negativas o cero
+> Tabla de frecuencia registros con edades negativas o cero
 
 ![](Edades2019.jpg)
-> Fuente Informe Icfes.
 
-Adicionalmente, de acuedo con el gráfico anterior, la prueba está caracterizada por el icfes para una población que supera los 15 años, lo cual nos hace suponer que los 22 registros (0,04%)  que indican edades menores a los 15 años, corresponden a anomalías que deben ser verificadas en la fuente y serán incluidas en nuestro informe final. Estos registros sumados a los 52 (0,10%) registros descartados por valores negativos o cero en el cálculo de la edad, representan el 0,14% de la muestra.
+> Caracterización de referencia edades inscritos a las pruebas Saber TyT.
+
+Adicionalmente, de acuerdo con el gráfico anterior, la prueba está caracterizada por el icfes para una población que supera los 15 años, lo cual nos hace suponer que los 22 registros (0,04%)  que indican edades menores a los 15 años, corresponden a anomalías que deben ser verificadas en la fuente y serán incluidas en nuestro informe final. 
 
 ```{r echo=FALSE}
 rangos_edad = base[base$edad>=1, c("ESTU_FECHANACIMIENTO","edad")]
@@ -278,12 +281,14 @@ ggplot(rangos_edad, aes(x=rango_edad, y=(..count..)/sum(..count..)))+
   theme_base()
 
 ```
+
 > Distribución de rangos de edades en la prueba
 
-## Resumen de anomalías {.tabset .tabset-fade .tabset-pills}
+Estos 22 registros sumados a los 52 (0,10%) registros descartados por valores negativos o cero en el cálculo de la edad, representan tan solo el 0,14% de la muestra.
+
+# Comprobación de anomalías {.tabset .tabset-fade .tabset-pills}
 
 Con las anomalías detectadas, procedemos a construir un derecho de petición para dirigirlo al Icfes e informarlas, a fin de solicitar además la información que nos permita dar solución a estos problemas.
-
 
 
 
