@@ -1,6 +1,6 @@
 ---
 title: "Prueba Saber TyT 2016-2"
-subtitle: "Análisis de rresultados"
+subtitle: "Análisis de resultados"
 author: "Institución Educando Líderes - Dpto. Estadísticas e información institucional"
 date: "`r Sys.Date()`"
 output:
@@ -78,7 +78,7 @@ Las siguientes son las categorías étnicas que han sido contempladas para la cl
 |Paez                       |                           |
 
 
-```{r Packages and functions, echo=FALSE, message=FALSE, warning=FALSE}
+```{r Packages and functions, echo=TRUE, message=FALSE, warning=FALSE}
 library(readxl)
 library(reshape2)
 library(dplyr)
@@ -95,6 +95,7 @@ library(scales)
 library(ggthemes)
 library(mice)
 library(BBmisc)
+library(ggplot2)
 
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
 #FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VARIABLES CONTINUAS
@@ -182,12 +183,12 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
 }
 ```
 
-# Los Datos 
+# Los datos 
 
-## Carga inicial de la base de datos
+## Base de datos (fuente original)
 
 La base de datos sobre la cual realizaremos el análisis fue provista por el Icfes en formato CSV.  
-Archivo: "SABERTYT20162.csv".
+Archivo: "SABERTYT20162.csv".  El diccionario de variables de esta base de datos puede ser consultado  [aqui](https://www.icfes.gov.co/documents/20143/1885820/2.+Genericas_SaberTyT_2016_2019.pdf).
 
 ```{r echo=FALSE}
 setwd("./")
@@ -211,20 +212,19 @@ base= base[base$ESTU_ESTADO == "PUBLICAR",]
 base= base[base$ESTU_NACIONALIDAD == "1 COLOMBIA",]
 str(base)
 ```
-
 > En la validación del dato de nacionalidad pudimos observar que se incluye tanto el código como el nombre del país en el mismo campo, sin embargo, no se observa inconsistencia alguna respecto a este dato, ya que los demás paises están almacenados de manera consistente bajo la estructura "código nombre". 
 
-# Análisis de calidad de los datos
+# Calidad de los datos {.tabset .tabset-fade .tabset-pills} 
 
 Cómo parte del proceso, nos ocupamos de realizar algunos análisis particulares que compartimos a continuación. 
 
-## Exploración de inconsistencias
+## Comprobación de anomalías {.tabset .tabset-fade .tabset-pills} 
 
-### Prueba de niveles de inglés {.tabset .tabset-fade .tabset-pills}
+### Prueba de niveles de inglés 
 
 Los niveles de inglés, según el Icfes, son en orden ascendente de acuerdo con el nivel de desempeño:
 
-1. A1-
+1. A1- 
 2. A1
 3. A2
 4. B1
@@ -237,13 +237,14 @@ base$MOD_INGLES_DESEM= factor(base$MOD_INGLES_DESEM, levels=c("A1-","A1","A2","B
 ### creamos una nueva Variable (meta_ingles_cumplida)
 base$meta_ingles_cumplida = ifelse(base$MOD_INGLES_DESEM == "B1" | base$MOD_INGLES_DESEM == "B2", "SI", "NO")
 base$meta_ingles_cumplida = factor(base$meta_ingles_cumplida)
+table(base$MOD_INGLES_DESEM)
 tabla_freq(base$meta_ingles_cumplida)
 ```
 > Tabla de frecuencia cumplimiento nivel de inglés
 
 Pudimos comprobar que el 13.98% efectivamente cumple con el nivel de inglés esperado.  *No se observan anomalías, a partir del caso.*
 
-### Edad de los estudiantes {.tabset .tabset-fade .tabset-pills}
+### Edad de los estudiantes 
 
 Agregamos una variable relativa a la edad del estudiante al momento de presentar la prueba, a fin de realizar la caracterización.  
 
@@ -257,7 +258,6 @@ Producto de ello, encontramos algunas edades negativas o cero, que nos conducen 
 ### Revisar las fechas de nacimiento atípicas por cálculo negativo
 tabla_freq(base$edad<=1)
 
-edades_imposibles = base[base$edad <= 1,]
 ```
 > Tabla de frecuencia registros con edades negativas o cero
 
@@ -270,8 +270,8 @@ Adicionalmente, de acuerdo con el gráfico anterior, la prueba está caracteriza
 ```{r echo=FALSE}
 rangos_edad = base[base$edad>=1, c("ESTU_FECHANACIMIENTO","edad")]
 rangos_edad = rangos_edad[!is.na(rangos_edad$edad),]
-rangos_edad$rango_edad = cut(rangos_edad$edad, breaks = c(0, 14.5, 21, 28, 50, 99),
-    labels = c("0-14", "15-20", "21-27", "28-50", "Mas de 50"))
+rangos_edad$rango_edad = cut(rangos_edad$edad, breaks = c(0, 14.5, 21, 28, 50, 100))
+rangos_edad$rango_edad = factor(rangos_edad$rango_edad)
 tabla_freq(rangos_edad$rango_edad)
 ggplot(rangos_edad, aes(x=rango_edad, y=(..count..)/sum(..count..)))+
   geom_bar(fill="steelblue", color="black")+
@@ -284,14 +284,179 @@ ggplot(rangos_edad, aes(x=rango_edad, y=(..count..)/sum(..count..)))+
 
 > Distribución de rangos de edades en la prueba
 
-Estos 22 registros sumados a los 52 (0,10%) registros descartados por valores negativos o cero en el cálculo de la edad, representan tan solo el 0,14% de la muestra.
+Estos 22 registros sumados a los 52 registros descartados por valores negativos o cero en el cálculo de la edad, representan tan solo el 0,14% de la muestra.
 
-# Comprobación de anomalías {.tabset .tabset-fade .tabset-pills}
+### Etnias
+
+|Etnias                     |     -                     |
+|---------------------------|---------------------------|
+|Arhuaco                    |Pasto                      |
+|Cancuamo                   |Pijao                      |
+|Comunidad Afrodescendiente |Raizal o Palenquero        |
+|Comunidad Rom (gitana)     |Sikuani                    |
+|Cubeo                      |Tucano                     |
+|Embera                     |Wayúu                      |
+|Guambiano                  |Zenú                       |
+|Huitoto                    |Ninguno                    |
+|Inga                       |Otro                       |
+|Paez                       |                           |
+
+> Etnias, diccionario de datos de la variable. Fuente: portal del Icfes.
+
+```{r echo=FALSE}
+base$ESTU_ETNIA = factor(base$ESTU_ETNIA)
+
+tabla_freq(base$ESTU_ETNIA)
+```
+> Etnias, ocurrencias en la base de datos del análisis
+
+En primera instancia confirmamos que no observamos valores inválidos o sin referencia en el diccionario de datos de la variable. 
+
+```{r echo=FALSE}
+base$ESTU_TIENE_ETNIA = factor(base$ESTU_TIENE_ETNIA, levels=c("SI","NO"))
+tabla_freq(base$ESTU_TIENE_ETNIA)
+```
+> Distribución de categorías con etnia
+
+```{r echo=FALSE}
+## base_etnias = base[!is.na(base$ESTU_TIENE_ETNIA), c("ESTU_TIENE_ETNIA", "ESTU_ETNIA")]
+base_etnias = base[, c("ESTU_TIENE_ETNIA", "ESTU_ETNIA")]
+base_etnias = base_etnias[order(base_etnias$ESTU_TIENE_ETNIA, base_etnias$ESTU_ETNIA), ]
+table( base_etnias)
+```
+> Distribución de los registros de grupos étnicos
+
+Observamos que los 3.276 registros clasificados con etnia SI, 3.010 contienen su respectivo registro de grupo étnico minoritario. 266 registros no lo tienen (NA), lo cual constituye  una anomalía que será incluida en el informe de correcciones requeridas.
+
+Observamos que los 45.098 registros clasificados como que NO pertenecesn a un grupo étnico minoritario, 76 de ellos contienen un registro de grupo étnico, lo cuál es una inconsistencia que debe ser incluida en el informe de correcciones requeridas.
+
+En total son 3.086 registros de pertenecientes a grupos étnicos minoritarios, que deberían corresponder con el número de registros clasificados de esa manera, de acuerdo con el diccionario de variables 2016-2 SABER TYT.
+
+### Limitaciones
+
+```{r echo=FALSE}
+tabla_freq(base$ESTU_LIMITA_MOTRIZ)
+```
+> Distribución limitación motriz.
+
+```{r echo=FALSE}
+tabla_freq(base$ESTU_LIMITA_INVIDENTE)
+```
+> Distribución limitación Invidente.
+
+```{r echo=FALSE}
+tabla_freq(base$ESTU_LIMITA_CONDICIONESPECIAL)
+```
+> Distribución limitación por condición especial.
+
+```{r echo=FALSE}
+tabla_freq(base$ESTU_LIMITA_SORDO)
+```
+> Distribución limitación auditiva.
+
+```{r echo=FALSE}
+tabla_freq(base$ESTU_LIMITA_AUTISMO)
+```
+> Distribución limitación por autismo.
+
+En todos los casos, observamos consistencia en los datos entregados, respecto a su definición en el diccionario de variables.
+
+
+```{r echo=FALSE}
+base_limitaciones = base[ , c("ESTU_LIMITA_CONDICIONESPECIAL","ESTU_LIMITA_SORDO","ESTU_LIMITA_INVIDENTE","ESTU_LIMITA_MOTRIZ", "ESTU_LIMITA_AUTISMO")] 
+capture.output(aggr(base_limitaciones, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7, labels=c("L_CNDESP","L_SORDO","L_INVID","L_MOTRIZ", "L_AUTISM")), file=tempfile())
+
+```
+
+> Se observa en este gráfico, las 78 combinaciones de discapacidad que presentaron según los datos.
+
+En vista de que, de acuerdo con el diccionario de variables, si se inscribió indicando que tiene alguna discapacidad - Motriz, Invidente, Condición especial, Sordo o Autismo, ello Indica que se inscribió con discapacidad, entonces es conveniente disponer una variable que lo represente de esa manera.
+
+
+```{r echo=FALSE}
+base$tiene_discapacidad = ifelse((base$ESTU_LIMITA_CONDICIONESPECIAL=="x" & !is.na(base$ESTU_LIMITA_CONDICIONESPECIAL)) | (base$ESTU_LIMITA_SORDO=="x" & !is.na(base$ESTU_LIMITA_SORDO)) | (base$ESTU_LIMITA_INVIDENTE == "x" & !is.na(base$ESTU_LIMITA_INVIDENTE)) | (base$ESTU_LIMITA_MOTRIZ == "x" & !is.na(base$ESTU_LIMITA_MOTRIZ)) | (base$ESTU_LIMITA_AUTISMO=="x" & !is.na(base$ESTU_LIMITA_AUTISMO)), "SI", "NO")
+tabla_freq(base$tiene_discapacidad)
+
+```
+> Distribución para el análisis de discapacidad.  
+
+### Puntajes Pruebas
+
+Los puntajes por modulos de la pruebas TyT tienen la siguiente definición segun el ICFES (_[link](https://www.icfes.gov.co/documents/20143/496194/Resultados%20que%20se%20reportan%20saber%20tyt%202018%201.pdf)_)
+
+![](Puntaje_modulos.png)
+
+
+```{r echo=FALSE}
+base_puntaje= base[,c('MOD_RAZONA_CUANTITAT_PUNT','MOD_LECTURA_CRITICA_PUNT','MOD_COMPETEN_CIUDADA_PUNT','MOD_INGLES_PUNT','MOD_COMUNI_ESCRITA_PUNT')]
+names(base_puntaje)[1]<- 'Razon_cuantitativa'
+names(base_puntaje)[2]<- 'Lect_critica'
+names(base_puntaje)[3]<- 'Compe_ciudadana'
+names(base_puntaje)[4]<- 'Ingles'
+names(base_puntaje)[5]<- 'Comu_escrita'
+
+ggplot(data = stack(base_puntaje), aes(x = ind, y = values)) +
+       stat_boxplot(geom = "errorbar", # Boxplot with error bars
+                    width = 0.2) +
+       geom_boxplot(fill = "#4271AE", colour = "#1F3552", # Colors
+                    alpha = 0.9, outlier.colour = "red") +
+       scale_y_continuous(name = "Puntaje") +  # Continuous variable label
+       scale_x_discrete(name = "Modulo") +      # Group label
+       ggtitle("Puntaje por modulo Prueba TyT") + # Plot title
+       theme(axis.line = element_line(colour = "black", # Theme customization
+                                      size = 0.25))
+```
+Podemos notar en los graficos de cajas que los promedios de cada uno de los modulos de la prueba son parecidos. Apesar de que podemos encontrar valores atipicos como aquellos estudiantes que no respondieron correctamente ningun pregunta del modulo o aquellos que obtuvieron un puntaje perfecto. Sin embargo, no se encontraron valores invalidos (puntajes negativos o puntajes mayores a 200)  
+
+```{r echo=FALSE}
+base_puntaje= base[,c('MOD_RAZONA_CUANTITAT_PUNT','MOD_LECTURA_CRITICA_PUNT','MOD_COMPETEN_CIUDADA_PUNT','MOD_INGLES_PUNT','MOD_COMUNI_ESCRITA_PUNT')]
+
+describe(base$MOD_COMUNI_ESCRITA_PUNT)
+```
+Tenemos 770 missing values en el puntaje del modulo de comunicación escrita. 
+
+## Corrección de anomalías  {.tabset .tabset-fade .tabset-pills}
 
 Con las anomalías detectadas, procedemos a construir un derecho de petición para dirigirlo al Icfes e informarlas, a fin de solicitar además la información que nos permita dar solución a estos problemas.
 
+Para proseguir con el proceso, procedemos a corregir las anomalías sin depender de la investigación anteriormente mencionada.
+
+### Missing values 
+
+```{r echo=FALSE}
+inspect_na(base)
+```
+Realizamos la validación de _missing values_ sobre de los campos trabajados hasta el momento
+
+```{r echo=FALSE}
+base_completa = base[ , c("MOD_INGLES_DESEM","ESTU_FECHANACIMIENTO", "ESTU_TIENE_ETNIA", "ESTU_ETNIA", "ESTU_LIMITA_CONDICIONESPECIAL","ESTU_LIMITA_SORDO","ESTU_LIMITA_INVIDENTE","ESTU_LIMITA_MOTRIZ", "ESTU_LIMITA_AUTISMO", "MOD_RAZONA_CUANTITAT_PUNT",
+"MOD_LECTURA_CRITICA_PUNT", "MOD_COMPETEN_CIUDADA_PUNT", "MOD_INGLES_PUNT",
+"MOD_COMUNI_ESCRITA_PUNT")] 
+capture.output(aggr(base_completa, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7, labels=c("D_INGLES","F_NCMTO", "T_ETNIA", "ETNIA", "L_CNDESP","L_SORDO","L_INVID","L_MOTRIZ", "L_AUTISM", "P_RZCUAN", "P_LECCRI", "P_COMCIU", "P_INGLES", "P_COMESC")), file=tempfile())
 
 
+
+```
+
+### Etnias {.tabset .tabset-fade .tabset-pills}
+
+1.- Corregimos registros que indican que NO tiene grupo étnico minoritario, sin embargo, indica un grupo etnico minoritario.  Decisión indicar que SI tiene grupo étnico minoritario.
+
+```{r echo=TRUE}
+### Corrección "TIENE ETNIA" NO con registro de ETNIA --->  "TIENE ETNIA" SI
+base$ESTU_TIENE_ETNIA[base$ESTU_TIENE_ETNIA=="NO" & !is.na(base$ESTU_ETNIA)] = "SI"
+tabla_freq(base$ESTU_TIENE_ETNIA)
+
+```
+2.- Reportamos a Icfes registros que indican SI tiene etnia, sin embargo tienen NA en etnia.  
+3.- Registros con NA en tiene etnia, son consistentes con NA en etnia.
+
+```{r echo=FALSE}
+base_reportar_icfes = base[((base$ESTU_TIENE_ETNIA=="SI" & !is.na(base$ESTU_TIENE_ETNIA)) & is.na(base$ESTU_ETNIA)), ]
+base_reportar_icfes$Inconsistencia = "ETNIA INCONSISTENTE"
+tabla_freq(base_reportar_icfes$Inconsistencia)
+
+```
 # Análisis de resultados
 
 Finalizada la etapa de aseguramiento de la calidad de los datos, hemos iniciado el desarrollo de la actividad de análisis.  Una vez finalice, los resultados serán publicados en este apartado del informe.
