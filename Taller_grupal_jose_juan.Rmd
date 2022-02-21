@@ -78,7 +78,7 @@ Las siguientes son las categorías étnicas que han sido contempladas para la cl
 |Paez                       |                           |
 
 
-```{r Packages and functions, echo=TRUE, message=FALSE, warning=FALSE}
+```{r Packages and functions, echo=FALSE, message=FALSE, warning=FALSE}
 library(readxl)
 library(reshape2)
 library(dplyr)
@@ -385,6 +385,7 @@ tabla_freq(base$tiene_discapacidad)
 Los puntajes por modulos de la pruebas TyT tienen la siguiente definición segun el ICFES (_[link](https://www.icfes.gov.co/documents/20143/496194/Resultados%20que%20se%20reportan%20saber%20tyt%202018%201.pdf)_)
 
 ![](Puntaje_modulos.png)
+> Definición puntaje por módulo.  
 
 
 ```{r echo=FALSE}
@@ -406,14 +407,38 @@ ggplot(data = stack(base_puntaje), aes(x = ind, y = values)) +
        theme(axis.line = element_line(colour = "black", # Theme customization
                                       size = 0.25))
 ```
-Podemos notar en los graficos de cajas que los promedios de cada uno de los modulos de la prueba son parecidos. Apesar de que podemos encontrar valores atipicos como aquellos estudiantes que no respondieron correctamente ningun pregunta del modulo o aquellos que obtuvieron un puntaje perfecto. Sin embargo, no se encontraron valores invalidos (puntajes negativos o puntajes mayores a 200)  
+> Diagrama de cajas del puntaje por modulo en la prueba TyT.  
+
+Podemos notar en los graficos de cajas que los promedios de cada uno de los modulos de la prueba son parecidos. Apesar de que podemos encontrar valores atipicos como aquellos estudiantes que no respondieron 
+correctamente ningun pregunta del modulo o aquellos que obtuvieron un puntaje perfecto. Sin embargo, no se encontraron valores invalidos (puntajes negativos o puntajes mayores a 200)  
 
 ```{r echo=FALSE}
 base_puntaje= base[,c('MOD_RAZONA_CUANTITAT_PUNT','MOD_LECTURA_CRITICA_PUNT','MOD_COMPETEN_CIUDADA_PUNT','MOD_INGLES_PUNT','MOD_COMUNI_ESCRITA_PUNT')]
 
 describe(base$MOD_COMUNI_ESCRITA_PUNT)
+tabla_freq(is.na(base$MOD_COMUNI_ESCRITA_PUNT))
 ```
-Tenemos 770 missing values en el puntaje del modulo de comunicación escrita. 
+> Tabla de frecuencia para missing values en la variable MOD_COMUNI_ESCRITA_PUNT.  
+
+Tenemos 770 missing values en el puntaje del modulo de comunicación escrita. Los cuales solo representan el 1.5% de la variable. Por lo que utilizaremos imputación por medio de hot-deck pmm
+
+```{r echo=FALSE}
+base2=base
+impute_base2 <- aregImpute(~ MOD_COMUNI_ESCRITA_PUNT + MOD_RAZONA_CUANTITAT_PUNT + MOD_LECTURA_CRITICA_PUNT + MOD_COMPETEN_CIUDADA_PUNT + MOD_INGLES_PUNT , data = base2, n.impute = 5)
+
+ids2=base2[rownames(impute_base2$imputed$MOD_COMUNI_ESCRITA_PUNT),c("ESTU_CONSECUTIVO","MOD_COMUNI_ESCRITA_PUNT")]
+ids2$MOD_COMUNI_ESCRITA_PUNT = as.numeric(impute_base2$imputed$MOD_COMUNI_ESCRITA_PUNT[,1])
+names(ids2)[2]="pmm"
+ids=base[is.na(base$MOD_COMUNI_ESCRITA_PUNT),c("ESTU_CONSECUTIVO","MOD_COMUNI_ESCRITA_PUNT")]
+ids=merge.data.frame(ids,ids2, by="ESTU_CONSECUTIVO")
+imputed <- as.data.frame(impute.transcan(impute_base2, imputation=1, data=base2, list.out=TRUE,pr=FALSE, check=FALSE))
+
+head(ids)
+
+print(paste('promedio de la variable imputada: ', mean(imputed$MOD_COMUNI_ESCRITA_PUNT)))
+
+```
+> Muestra de la imputación de la variable MOD_COMUNI_ESCRITA_PUNT.  
 
 ## Corrección de anomalías  {.tabset .tabset-fade .tabset-pills}
 
@@ -426,7 +451,7 @@ Para proseguir con el proceso, procedemos a corregir las anomalías sin depender
 ```{r echo=FALSE}
 inspect_na(base)
 ```
-Realizamos la validación de _missing values_ sobre de los campos trabajados hasta el momento
+Realizamos la validación de _missing values_ sobre de los campos trabajados hasta el momento. El tratamiento que dimos a estos _missing values_ lo ilustramos particularmente en el caso de puntajes pruebas.
 
 ```{r echo=FALSE}
 base_completa = base[ , c("MOD_INGLES_DESEM","ESTU_FECHANACIMIENTO", "ESTU_TIENE_ETNIA", "ESTU_ETNIA", "ESTU_LIMITA_CONDICIONESPECIAL","ESTU_LIMITA_SORDO","ESTU_LIMITA_INVIDENTE","ESTU_LIMITA_MOTRIZ", "ESTU_LIMITA_AUTISMO", "MOD_RAZONA_CUANTITAT_PUNT",
