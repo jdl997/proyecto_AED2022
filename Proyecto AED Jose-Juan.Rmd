@@ -1,5 +1,5 @@
 ---
-title: "Proyecto Final AED Jose-Juan"
+title: "Análisis del rendimiento de los equipos de fútbol en tiempos de pandemia: El caso de la Súperliga de Grecia"
 output:
   rmdformats::material:
     highlight: kate
@@ -14,67 +14,7 @@ pkgdown:
   as_is: true    
 ---
 
-
-# Contexto
-A finales del 2019 en el mes de diciembre, Wuhan, China se convirtió en el epicentro de un brote de neumonía de etiología desconocida que no cedía ante tratamientos actualmente utilizados. En pocos días los contagios aumentaron exponencialmente, no solo en China Continental sino también en diferentes países. El agente causal fue identificado, un nuevo coronavirus (2019-nCoV) posteriormente clasificado como SARS-CoV2 causante de la enfermedad COVID-19. El 11 de marzo del 2020 la Organización Mundial de Salud declara a esta enfermedad como una pandemia. 
-
-La presente revisión tiene como finalidad estudiar acerca de **cómo esta situación de pandemia afectó el rendimiento de los equipos de fútbol durante sus juegos de local, particularmente en la Súperliga de fútbol de Grecia**, considerando el hecho de que los partidos se jugaron a puerta cerrada.
-
-Si bien nos ocuparemos en un futuro de revisar además un modelo estadístico para medir el efecto de jugar a puerta cerrada, durante situación de pandemia, sobre la ventaja de jugar de local, **en esta   etapa cubrimos lo estrictamente concerniente al *análisis exploratorio de los datos* inputados al respecto de nuestra pregunta de investigación**.
-
-## Superliga de Grecia  {.tabset .tabset-fade .tabset-pills}
-
-La Superliga de Grecia (en griego, Ελληνική Σούπερ Λίγκα) es una competición entre clubes de fútbol de Grecia. Es la primera división del fútbol griego.
-
-
-### Historia
-
-El primer campeonato griego funcionó entre 1906 y 1913 bajo la organización de la Federación Griega de Gimnasia (SEGAS), con sede en Atenas. Posteriormente, bajo el paraguas de la EPSE, precusora de la actual Federación Helénica de Fútbol, la EPO, se disputaron varios campeonatos regionales.
-
-En 1927 la EPO puso en marcha el primer campeonato nacional considerado oficial, el Campeonato Panhelénico. En este torneo solo tomaban parte equipos de Atenas, El Pireo, Tesalónica y Patras. Se disputaban simultáneamente varias ligas regionales y posteriormente los campeones locales se enfrentaban entre sí en una liguilla final.
-
-En 1959 el campeonato pasó a ser profesional, y se abandonó el formato regional para crear una única liga nacional. La primera división (Nivel I) era la Alpha Ethniki (en español: División A), aunque en la temporada 2006/07 cambió ese nombre por el actual Superliga.
-
-### Sistema de competición
-
-La Federación Helénica de Fútbol organiza este torneo de liga, compuesto de 16 clubes. Todos deben enfrentarse entre sí, en dos ocasiones, y el sistema de puntuación es el siguiente: tres puntos para el vencedor de un partido, cero puntos para el perdedor de un partido y en caso de que dos equipos hayan empatado un partido, se les compensa con un punto para cada uno. La Superliga otorga dos plazas para la UEFA Champions League (campeón y subcampeón) y dos para la UEFA Europa League (tercero y cuarto), además de la del campeón de la Copa de Grecia.
-
-Al final, el que sume más puntos, ya finalizado el certamen, es el campeón nacional.
-
-Hasta 2017, se disputaba al acabar el campeonato una liguilla entre los equipos situados entre la segunda y la quinta plaza para determinar la plaza restante de UEFA Champions League y las dos de UEFA Europa League que tiene Grecia, pero a partir de la temporada 2017/18 se ha eliminado, otorgándose estas plazas según la clasificación en liga.
-
-El último y el penúltimo clasificado de la tabla general desciende a la segunda división, la Super League Greece 2.
-
-### Temporada 2021-2022
-La temporada 2021-22 es la edición número 85 de la Superliga de Grecia. La misma comenzó el 11 de septiembre de 2021 y terminará en mayo de 2022. Olympiakos es el campeón defensor.
-
-A continuación se muestra la lista de clubes que compiten en la Superliga 2021-22, con su respectiva ubicación y estadio.
-
-Equipo              | Ciudad       | Estadio                          | Capacidad
-------------------- | ------------ | -------------------------------  | ----------
-AEK Atenas          | Atenas       | Estadio Olímpico de Atenas       | 69.618
-Apollon Smyrnis     | Atenas       | Georgios Kamaras Stadium         | 14.200
-Aris Thess          | Thessaloniki | Estadio Kleanthis Vikelidis      |	22.800
-Asteras Trípoli     | Trípoli      | Estadio Theodoros Kolokotronis	  |  7.442
-Atromitos           | Peristeri    | Estadio Peristeri                |  9.050
-Lamia               | Lamía        | Estadio Municipal de Lamia       |  5.500
-OFI                 | Heraklion    | Estadio Theodoros Vardinogiannis |  9.088
-Olympiakos          | Piraeus      | Estadio Georgios Karaiskakis    | 32.115
-Panathinaikos       | Atenas       | Estadio Apostolos Nikolaidis     | 16.620
-Panetolikos         | Agrinio      | Estadio Panetolikos              |  7.321
-PAOK Salónica       | Thessaloni   | Estadio La Tumba                 | 28.703
-PAS Gianni          | Ioannina     | Estadio Zosimades                |  7.652
-Volos               | Volos        | Estadio Panthessaliko            | 22.700
-
-
-	
-
-
-# Scripts requeridos para el análisis
-
-## Carga de paquetes y funciones
-
-```{r message=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(readxl)
 library(reshape2)
 library(dplyr)
@@ -178,10 +118,68 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
 }
 ```
 
-# Carga de los datos e identificación de la estructura de los datos
+# Introducción
 
-Se carga el archivo "Grecia.xlsx" el cual contiene el dataset de los partidos jugados en grecia.
-Se busca identificar: ¿que variables estan disponibles y que tipo de variables son?
+A finales del 2019 en el mes de diciembre, Wuhan, China se convirtió en el epicentro de un brote de neumonía de etiología desconocida que no cedía ante tratamientos actualmente utilizados. En pocos días los contagios aumentaron exponencialmente, no solo en China Continental sino también en diferentes países. El agente causal fue identificado, un nuevo coronavirus (2019-nCoV) posteriormente clasificado como SARS-CoV2 causante de la enfermedad COVID-19. El 11 de marzo del 2020 la Organización Mundial de Salud declara a esta enfermedad como una pandemia. 
+
+Nuestra firma, siempre interesada en producir valiosos insights para nuestros clientes y en atención a su solicitud al respecto, dedicó a uno de sus equipos de analítica a estudiar **cómo esta situación de pandemia afectó el rendimiento de los equipos de fútbol de las ligas europeas durante sus juegos de local** considerando el hecho de que los partidos se jugaron a puerta cerrada durante este periodo, concentrándose específicamente en dicho efecto en la Súperliga de fútbol de Grecia. 
+
+Los datos sobre los cuales está sustentado este análisis provienen de nuestra propia recolección y, Si bien nos ocuparemos en un trabajo futuro de revisar un modelo estadístico para medir el efecto de jugar a puerta cerrada durante situación de pandemia, sobre la ventaja de jugar de local, **en esta etapa cubrimos lo concerniente al análisis exploratorio de los datos**.
+
+Este informe aporta a continuación algo de contexto respecto a la súperliga de Grecia y cuenta con cuatro secciones adicionales: en la primera, presentamos detalles respecto a los datos recolectados y a su estructura de variables; en la segunda nos referimos a los hallazgos en materia de anomalías y a las transformaciones realizadas en consecuencia. La tercera sección describe las variables que adicionamos para favorecer a los trabajos futuros y la última sección contempla algunas conclusiones acerca del proceso, así como, algunas recomendaciones de interés para los equipos de recolección de datos.
+
+
+## Superliga de Grecia  {.tabset .tabset-fade .tabset-pills}
+
+La Superliga de Grecia (en griego, Ελληνική Σούπερ Λίγκα) es una competición entre clubes de fútbol de Grecia. Es la primera división del fútbol griego.
+
+
+### Historia
+
+El primer campeonato griego funcionó entre 1906 y 1913 bajo la organización de la Federación Griega de Gimnasia (SEGAS), con sede en Atenas. Posteriormente, bajo el paraguas de la EPSE, precusora de la actual Federación Helénica de Fútbol, la EPO, se disputaron varios campeonatos regionales.
+
+En 1927 la EPO puso en marcha el primer campeonato nacional considerado oficial, el Campeonato Panhelénico. En este torneo solo tomaban parte equipos de Atenas, El Pireo, Tesalónica y Patras. Se disputaban simultáneamente varias ligas regionales y posteriormente los campeones locales se enfrentaban entre sí en una liguilla final.
+
+En 1959 el campeonato pasó a ser profesional, y se abandonó el formato regional para crear una única liga nacional. La primera división (Nivel I) era la Alpha Ethniki (en español: División A), aunque en la temporada 2006/07 cambió ese nombre por el actual Superliga.
+
+### Sistema de competición
+
+La Federación Helénica de Fútbol organiza este torneo de liga, compuesto de 16 clubes. Todos deben enfrentarse entre sí, en dos ocasiones, y el sistema de puntuación es el siguiente: tres puntos para el vencedor de un partido, cero puntos para el perdedor de un partido y en caso de que dos equipos hayan empatado un partido, se les compensa con un punto para cada uno. La Superliga otorga dos plazas para la UEFA Champions League (campeón y subcampeón) y dos para la UEFA Europa League (tercero y cuarto), además de la del campeón de la Copa de Grecia.
+
+Al final, el que sume más puntos, ya finalizado el certamen, es el campeón nacional.
+
+Hasta 2017, se disputaba al acabar el campeonato una liguilla entre los equipos situados entre la segunda y la quinta plaza para determinar la plaza restante de UEFA Champions League y las dos de UEFA Europa League que tiene Grecia, pero a partir de la temporada 2017/18 se ha eliminado, otorgándose estas plazas según la clasificación en liga.
+
+El último y el penúltimo clasificado de la tabla general desciende a la segunda división, la Super League Greece 2.
+
+### Temporada 2021-2022
+La temporada 2021-22 es la edición número 85 de la Superliga de Grecia. La misma comenzó el 11 de septiembre de 2021 y terminará en mayo de 2022. Olympiakos es el campeón defensor.
+
+A continuación se muestra la lista de clubes que compiten en la Superliga 2021-22, con su respectiva ubicación y estadio.
+
+Equipo              | Ciudad       | Estadio                          | Capacidad
+------------------- | ------------ | -------------------------------  | ----------
+AEK Atenas          | Atenas       | Estadio Olímpico de Atenas       | 69.618
+Apollon Smyrnis     | Atenas       | Georgios Kamaras Stadium         | 14.200
+Aris Thess          | Thessaloniki | Estadio Kleanthis Vikelidis      |	22.800
+Asteras Trípoli     | Trípoli      | Estadio Theodoros Kolokotronis	  |  7.442
+Atromitos           | Peristeri    | Estadio Peristeri                |  9.050
+Lamia               | Lamía        | Estadio Municipal de Lamia       |  5.500
+OFI                 | Heraklion    | Estadio Theodoros Vardinogiannis |  9.088
+Olympiakos          | Piraeus      | Estadio Georgios Karaiskakis     | 32.115
+Panathinaikos       | Atenas       | Estadio Apostolos Nikolaidis     | 16.620
+Panetolikos         | Agrinio      | Estadio Panetolikos              |  7.321
+PAOK Salónica       | Thessaloni   | Estadio La Tumba                 | 28.703
+PAS Gianni          | Ioannina     | Estadio Zosimades                |  7.652
+Volos               | Volos        | Estadio Panthessaliko            | 22.700
+
+
+# Sobre los datos
+
+## Recolección 
+
+Los siguientes fueron los datos recolectados por nuestro equipo destinados a realizar el análisis del cuál nos ocupamos en este proyecto.  
+
 ```{r}
 base=read_excel("Grecia.xlsx")
 str(base)

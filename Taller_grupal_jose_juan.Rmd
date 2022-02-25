@@ -385,6 +385,7 @@ tabla_freq(base$tiene_discapacidad)
 Los puntajes por modulos de la pruebas TyT tienen la siguiente definición segun el ICFES (_[link](https://www.icfes.gov.co/documents/20143/496194/Resultados%20que%20se%20reportan%20saber%20tyt%202018%201.pdf)_)
 
 ![](Puntaje_modulos.png)
+
 > Definición puntaje por módulo.  
 
 
@@ -407,10 +408,11 @@ ggplot(data = stack(base_puntaje), aes(x = ind, y = values)) +
        theme(axis.line = element_line(colour = "black", # Theme customization
                                       size = 0.25))
 ```
+
 > Diagrama de cajas del puntaje por modulo en la prueba TyT.  
 
-Podemos notar en los graficos de cajas que los promedios de cada uno de los modulos de la prueba son parecidos. Apesar de que podemos encontrar valores atipicos como aquellos estudiantes que no respondieron 
-correctamente ningun pregunta del modulo o aquellos que obtuvieron un puntaje perfecto. Sin embargo, no se encontraron valores invalidos (puntajes negativos o puntajes mayores a 200)  
+Podemos notar en los gráficos de cajas que los promedios de cada uno de los módulos de la prueba son parecidos. A pesar de que podemos encontrar valores atípicos como aquellos estudiantes que no respondieron 
+correctamente ningun pregunta del módulo o aquellos que obtuvieron un puntaje perfecto. Sin embargo, no se encontraron valores inválidos (puntajes negativos o puntajes mayores a 200).  
 
 ```{r echo=FALSE}
 base_puntaje= base[,c('MOD_RAZONA_CUANTITAT_PUNT','MOD_LECTURA_CRITICA_PUNT','MOD_COMPETEN_CIUDADA_PUNT','MOD_INGLES_PUNT','MOD_COMUNI_ESCRITA_PUNT')]
@@ -418,9 +420,10 @@ base_puntaje= base[,c('MOD_RAZONA_CUANTITAT_PUNT','MOD_LECTURA_CRITICA_PUNT','MO
 describe(base$MOD_COMUNI_ESCRITA_PUNT)
 tabla_freq(is.na(base$MOD_COMUNI_ESCRITA_PUNT))
 ```
+
 > Tabla de frecuencia para missing values en la variable MOD_COMUNI_ESCRITA_PUNT.  
 
-Tenemos 770 missing values en el puntaje del modulo de comunicación escrita. Los cuales solo representan el 1.5% de la variable. Por lo que utilizaremos imputación por medio de hot-deck pmm
+Observamos 770 _missing values_ en el puntaje del módulo de comunicación escrita, los cuales representan el 1.5% de la variable, por lo cual utilizaremos imputación por medio del método _hot-deck pmm_.
 
 ```{r echo=FALSE}
 base2=base
@@ -438,6 +441,7 @@ head(ids)
 print(paste('promedio de la variable imputada: ', mean(imputed$MOD_COMUNI_ESCRITA_PUNT)))
 
 ```
+
 > Muestra de la imputación de la variable MOD_COMUNI_ESCRITA_PUNT.  
 
 ## Corrección de anomalías  {.tabset .tabset-fade .tabset-pills}
@@ -482,6 +486,7 @@ base_reportar_icfes$Inconsistencia = "ETNIA INCONSISTENTE"
 tabla_freq(base_reportar_icfes$Inconsistencia)
 
 ```
+
 # Análisis de resultados
 
 Finalizada la etapa de aseguramiento de la calidad de los datos, hemos iniciado el desarrollo de la actividad de análisis.  Una vez finalice, los resultados serán publicados en este apartado del informe.
