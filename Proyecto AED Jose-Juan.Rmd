@@ -31,6 +31,8 @@ library(scales)
 library(ggthemes)
 library(mice)
 library(BBmisc)
+library(dplyr)
+
 
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
 #FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VARIABLES CONTINUAS
@@ -198,6 +200,16 @@ tablaresum <- data.frame(VariablesBD1819,tipos, Rangos)
 kable(tablaresum) %>%
   kable_styling()
 ```
+
+## Union de las tablas
+
+```{r}
+base18_20= union_all(base1819,base1920)
+base18_21= union_all(base18_20,base2021)
+
+base_filtrada= base18_21[,c(2,4:15,18:23,106:107,109:114)]
+```
+
 Temporada 2018-1019
 El número de columnas que contiene la base de datos es de `r ncol(base1)` y el número de registros cargados es de `r nrow(base1)`.
 
