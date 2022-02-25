@@ -178,12 +178,35 @@ Volos               | Volos        | Estadio Panthessaliko            | 22.700
 
 ## Recolección 
 
-Los siguientes fueron los datos recolectados por nuestro equipo destinados a realizar el análisis del cuál nos ocupamos en este proyecto.  
+Los datos recolectados por nuestro equipo, destinados a realizar el análisis del cuál nos ocupamos en este proyecto es el siguiente.
 
 ```{r}
-base=read_excel("Grecia.xlsx")
-str(base)
+
+setwd("./")
+base1819 = read_excel("Grecia.xlsx", sheet = 1)
+base1920 = read_excel("Grecia.xlsx", sheet = 2)
+base2021 = read_excel("Grecia.xlsx", sheet = 3)
+
+## str(base1)
+
+VariablesBD1819 <- as.matrix(variable.names(base1819))
+tipos <-  as.matrix(lapply(base1819, class))
+Rangos <- as.matrix(lapply(base1819, range))
+tablaresum <- data.frame(VariablesBD1819,tipos, Rangos)
+
+
+kable(tablaresum) %>%
+  kable_styling()
 ```
+Temporada 2018-1019
+El número de columnas que contiene la base de datos es de `r ncol(base1)` y el número de registros cargados es de `r nrow(base1)`.
+
+Temporada 2019-2020
+El número de columnas que contiene la base de datos es de `r ncol(base2)` y el número de registros cargados es de `r nrow(base3)`.
+
+Temporada 2020-2021
+El número de columnas que contiene la base de datos es de `r ncol(base3)` y el número de registros cargados es de `r nrow(base3)`.
+
 
 # Detección de anomalías
 
