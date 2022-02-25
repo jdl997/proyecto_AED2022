@@ -209,6 +209,7 @@ base18_21= union_all(base18_20,base2021)
 
 base_filtrada= base18_21[,c(2,4:15,18:23,106:107,109:114)]
 ```
+prueba
 
 Temporada 2018-1019
 El número de columnas que contiene la base de datos es de `r ncol(base1)` y el número de registros cargados es de `r nrow(base1)`.
