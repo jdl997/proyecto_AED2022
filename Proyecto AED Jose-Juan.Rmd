@@ -32,6 +32,7 @@ library(ggthemes)
 library(mice)
 library(BBmisc)
 library(dplyr)
+library(janitor)
 
 
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
@@ -182,53 +183,76 @@ Volos               | Volos        | Estadio Panthessaliko            | 22.700
 
 Los datos recolectados por nuestro equipo, destinados a realizar el análisis del cuál nos ocupamos en este proyecto es el siguiente.
 
-```{r}
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
 setwd("./")
-base1819 = read_excel("Grecia.xlsx", sheet = 1)
+base1819 = read_excel("Grecia.xlsx", sheet = 3)
 base1920 = read_excel("Grecia.xlsx", sheet = 2)
-base2021 = read_excel("Grecia.xlsx", sheet = 3)
+base2021 = read_excel("Grecia.xlsx", sheet = 1)
 
-## str(base1)
-
-VariablesBD1819 <- as.matrix(variable.names(base1819))
-tipos <-  as.matrix(lapply(base1819, class))
-Rangos <- as.matrix(lapply(base1819, range))
-tablaresum <- data.frame(VariablesBD1819,tipos, Rangos)
-
-
-kable(tablaresum) %>%
-  kable_styling()
 ```
 
-## Union de las tablas
+# Caracterización de las bases de datos.
+Se utilizaron 3 bases de datos: Temporada 2018-2019, Temporada 2019-2020 y Temporada 2020-2021.
+
+##Temporada 2018-1019
+El número de columnas que contiene la base de datos es de `r ncol(base1819)` y el número de registros cargados es de `r nrow(base1819)`.
+
+##Temporada 2019-2020
+El número de columnas que contiene la base de datos es de `r ncol(base1920)` y el número de registros cargados es de `r nrow(base1920)`.
+
+##Temporada 2020-2021
+El número de columnas que contiene la base de datos es de `r ncol(base2021)` y el número de registros cargados es de `r nrow(base2021)`.
+
+En vista de que las fuentes se van a unir para realizar el análisis, decidimos revisar antes la estructura de las bases para identificar sus diferencias y determinar cuales variables no son compartidas entre ellas.  Estas variables son presentadas a continuación.
 
 ```{r}
-base18_20= union_all(base1819,base1920)
-base18_21= union_all(base18_20,base2021)
+compare_df_cols(base1819, base1920, base2021, return = "mismatch", bind_method = "rbind")
 
-base_filtrada= base18_21[,c(2,4:15,18:23,106:107,109:114)]
 ```
-prueba
 
-Temporada 2018-1019
-El número de columnas que contiene la base de datos es de `r ncol(base1)` y el número de registros cargados es de `r nrow(base1)`.
+## Union de los datos
 
-Temporada 2019-2020
-El número de columnas que contiene la base de datos es de `r ncol(base2)` y el número de registros cargados es de `r nrow(base3)`.
+```{r}
+base18_20= union_all(base1819, base1920)
+base18_21= union_all(base18_20, base2021)
 
-Temporada 2020-2021
-El número de columnas que contiene la base de datos es de `r ncol(base3)` y el número de registros cargados es de `r nrow(base3)`.
+base_filtrada= base18_21[,c(2:22,42:47)]
+```
 
+El número de columnas que contiene la nueva base de datos con las tres temporadas desde 2018 a 2021 es de `r ncol(base18_21)` y el número de registros cargados es de `r nrow(base18_21)` y cuenta con la información asociada a estadísticas de los partidos en grupos de variables que se refieren a 
+* Datos básicos del partido
+* Estadísticas del juego
+* Cuotas de casas de apuestas
+
+A partir de la investigación respecto al comportamiento de la liga y del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son de interés para el presente análisis:
+
+```{r}
+
+# declaring the columns of data frame
+# assigning new names to the columns of the data frame
+##colnames(base_filtrada) <- c('FECHA','EQUIPO_LOCAL','EQUIPO_VISITANTE','','','','')
+
+# printing new data frame
+
+## CREAR CUADRO CON VARIABLES CUALI / CUANTI
+
+##columnas= colnames(base_filtrada)
+##Tipo_variables= c("Cuantitativa Discreta","Cualitativa Nominal","Cualitativa Ordinal","Cualitativa ##Nominal","Cualitativa Nominal","Cualitativa Ordinal","Cualitativa Nominal","Cualitativa Ordinal","Cuantitativa ##Discreta","Cuantitativa Discreta","Cuantitativa Discreta","Cuantitativa Discreta","Cuantitativa ##Discreta","Cuantitativa Discreta","Cualitativa Nominal","Cualitativa Nominal","Cualitativa Ordinal","Cualitativa ##Ordinal")
+##tabla_variables <- data.frame (columnas, Tipo_variables)
+##knitr::kable(tabla_variables, "simple")
+
+```
 
 # Detección de anomalías
 
 ### 1. Formato de las variables no coincide con su tipo de variable
 ```{r}
-base$HomeTeam = factor(base$HomeTeam)
-base$AwayTeam = factor(base$AwayTeam)
-base$FTR = factor(base$FTR)
-base$HTR = factor(base$HTR)
+base_filtrada$ HomeTeam = factor(base_filtrada$HomeTeam)
+base_filtrada$AwayTeam = factor(base_filtrada$AwayTeam)
+base_filtrada$FTR = factor(base_filtrada$FTR)
+base_filtrada$HTR = factor(base_filtrada$HTR)
 ```
 
 ### 2. Valores de variables no validas
@@ -236,10 +260,10 @@ base$HTR = factor(base$HTR)
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
 Aunque 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana.
 ```{r}
-tabla_freq(base$FTHG)
+tabla_freq(base_filtrada$FTHG)
 ```
 
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del visitante al terminar el partido).
 ```{r}
-tabla_freq(base$FTAG)
+tabla_freq(base_filtrada$FTAG)
 ```
