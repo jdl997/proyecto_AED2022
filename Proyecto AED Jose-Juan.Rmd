@@ -2,17 +2,21 @@
 title: "Análisis del rendimiento de los equipos de fútbol en tiempos de pandemia: El caso de la Súperliga de Grecia"
 output:
   rmdformats::material:
-    highlight: kate
     self_contained: true
-    code_folding: show
+    code_folding: hide
     thumbnails: true
     gallery: true
     fig_width: 4
     fig_height: 4
-    df_print: kable
+    df_print: paged
 pkgdown:
   as_is: true    
 ---
+```{r global_options, echo=FALSE}
+knitr::opts_chunk$set(fig.path="", message=FALSE, warning=FALSE,
+                      echo=FALSE, results="show", fig.width=11)
+```
+
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(readxl)
@@ -122,43 +126,54 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
 ```
 
 # Introducción
+El 11 de marzo de 2020, la Organización Mundial de la Salud declaró una pandemia. Rápidamente se paralizó el mundo. El 11 de marzo de 2021, se confirmaron 117.573.007 casos y se registraron 2.610.925 muertes ([OMS](https://www.frontiersin.org/articles/10.3389/fspor.2021.695922/full#B36)). Los países afectados aplicaron diversos niveles de respuesta a lo largo del año, incluyendo restricciones sociales y cierres laborales, que impactaron de manera importante a las sociedades, más allá de los daños sanitarios directamente atribuidos al COVID-19. En vista de las masas que mueve el deporte, especialmente el deporte de élite, este tipo de eventos se debió suspender. Eventos deportivos como los Juegos Olímpicos y Paralímpicos de Tokio fueron aplazados. Gracias a la evolución en los tratamientos y a la aplicación de estrictos protocolos sanitarios, algunos campeonatos profesionales se reanudaron con algunas restricciones cómo la de efectuarse a puerta cerrada en estadios vacíos. Bajo estas nuevas circunstancias, surge la inquietud al respecto de **cómo esta situación extraordinaria afectó el rendimiento de los equipos de fútbol de las ligas europeas**, en vista de la supuesta ventaja que ofrecían los estadio con la mayoría de espectadores alentando al equipo local. Según estudios ^1^ la ventaja de jugar de local se soporta en datos que demuestran de manera consistente que los equipos locales ganan más del 50% de los partidos jugados con un calendario equilibrado de local y visitante.
 
-A finales del 2019 en el mes de diciembre, Wuhan, China se convirtió en el epicentro de un brote de neumonía de etiología desconocida que no cedía ante tratamientos actualmente utilizados. En pocos días los contagios aumentaron exponencialmente, no solo en China Continental sino también en diferentes países. El agente causal fue identificado, un nuevo coronavirus (2019-nCoV) posteriormente clasificado como SARS-CoV2 causante de la enfermedad COVID-19. El 11 de marzo del 2020 la Organización Mundial de Salud declara a esta enfermedad como una pandemia. 
-
-Nuestra firma, siempre interesada en producir valiosos insights para nuestros clientes y en atención a su solicitud al respecto, dedicó a uno de sus equipos de analítica a estudiar **cómo esta situación de pandemia afectó el rendimiento de los equipos de fútbol de las ligas europeas durante sus juegos de local** considerando el hecho de que los partidos se jugaron a puerta cerrada durante este periodo, concentrándose específicamente en dicho efecto en la Súperliga de fútbol de Grecia. 
+Nuestra firma, siempre interesada en producir valiosos insights para nuestros clientes y en atención a su solicitud al respecto, dedicó a uno de sus equipos de analítica a estudiar esta incógnita enfocado particularmente en dicho efecto sobre los equipos de la Súperliga de fútbol de Grecia. 
 
 Los datos sobre los cuales está sustentado este análisis provienen de nuestra propia recolección y, Si bien nos ocuparemos en un trabajo futuro de revisar un modelo estadístico para medir el efecto de jugar a puerta cerrada durante situación de pandemia, sobre la ventaja de jugar de local, **en esta etapa cubrimos lo concerniente al análisis exploratorio de los datos**.
 
 Este informe aporta a continuación algo de contexto respecto a la súperliga de Grecia y cuenta con cuatro secciones adicionales: en la primera, presentamos detalles respecto a los datos recolectados y a su estructura de variables; en la segunda nos referimos a los hallazgos en materia de anomalías y a las transformaciones realizadas en consecuencia. La tercera sección describe las variables que adicionamos para favorecer a los trabajos futuros y la última sección contempla algunas conclusiones acerca del proceso, así como, algunas recomendaciones de interés para los equipos de recolección de datos.
 
+<font face="Courier New" size=2 align="left" >
+
+(1) Ref. _Courneya, K. S., and Carron, A. V. (1992). The home advantage in sport competitions: a literature review. J. Sport Exerc. Psychol. 14, 13–27. doi: 10.1123/jsep.14.1.13_
+
+</font>
 
 ## Superliga de Grecia  {.tabset .tabset-fade .tabset-pills}
 
 La Superliga de Grecia (en griego, Ελληνική Σούπερ Λίγκα) es una competición entre clubes de fútbol de Grecia. Es la primera división del fútbol griego.
 
-
-### Historia
-
-El primer campeonato griego funcionó entre 1906 y 1913 bajo la organización de la Federación Griega de Gimnasia (SEGAS), con sede en Atenas. Posteriormente, bajo el paraguas de la EPSE, precusora de la actual Federación Helénica de Fútbol, la EPO, se disputaron varios campeonatos regionales.
-
-En 1927 la EPO puso en marcha el primer campeonato nacional considerado oficial, el Campeonato Panhelénico. En este torneo solo tomaban parte equipos de Atenas, El Pireo, Tesalónica y Patras. Se disputaban simultáneamente varias ligas regionales y posteriormente los campeones locales se enfrentaban entre sí en una liguilla final.
-
-En 1959 el campeonato pasó a ser profesional, y se abandonó el formato regional para crear una única liga nacional. La primera división (Nivel I) era la Alpha Ethniki (en español: División A), aunque en la temporada 2006/07 cambió ese nombre por el actual Superliga.
+![](liga_griega_resumen.jpg)
+Fuente. Transfermarkt.es
 
 ### Sistema de competición
 
-La Federación Helénica de Fútbol organiza este torneo de liga, compuesto de 16 clubes. Todos deben enfrentarse entre sí, en dos ocasiones, y el sistema de puntuación es el siguiente: tres puntos para el vencedor de un partido, cero puntos para el perdedor de un partido y en caso de que dos equipos hayan empatado un partido, se les compensa con un punto para cada uno. La Superliga otorga dos plazas para la UEFA Champions League (campeón y subcampeón) y dos para la UEFA Europa League (tercero y cuarto), además de la del campeón de la Copa de Grecia.
+La Federación Helénica de Fútbol organiza este torneo de liga y el sistema de puntuación es el siguiente: tres puntos para el vencedor de un partido, cero puntos para el perdedor de un partido y en caso de que dos equipos hayan empatado un partido, se les compensa con un punto para cada uno. La Superliga otorga dos plazas para la UEFA Champions League (campeón y subcampeón) y dos para la UEFA Europa League (tercero y cuarto), además de la del campeón de la Copa de Grecia.
 
-Al final, el que sume más puntos, ya finalizado el certamen, es el campeón nacional.
+Los 14 equipos participantes juegan entre sí todos contra todos a dos ruedas, totalizando 26 partidos cada uno. Al término de la fecha 26, los seis primeros clasificados disputarán la Ronda campeonato, mientras que los ocho restantes pasarán a jugar la Ronda por la permanencia. Los puntos obtenidos hasta la última fecha de la fase regular serán transferidos a la segunda fase, respectivamente a la zona en que se encuentre cada club.
 
-Hasta 2017, se disputaba al acabar el campeonato una liguilla entre los equipos situados entre la segunda y la quinta plaza para determinar la plaza restante de UEFA Champions League y las dos de UEFA Europa League que tiene Grecia, pero a partir de la temporada 2017/18 se ha eliminado, otorgándose estas plazas según la clasificación en liga.
+A partir de noviembre de 2021, la Superliga griega ocupa el puesto 19 en la clasificación de ligas de la UEFA, basada en los resultados de las competiciones europeas de los últimos cinco años. Desde la fundación del primer Campeonato Panhelénico oficial en 1927, *sólo seis clubes han ganado el título*.
 
-El último y el penúltimo clasificado de la tabla general desciende a la segunda división, la Super League Greece 2.
+### Temporadas 2021-2022 {.tabset .tabset-fade .tabset-pills}
 
-### Temporada 2021-2022
+#### 2021-2022
 La temporada 2021-22 es la edición número 85 de la Superliga de Grecia. La misma comenzó el 11 de septiembre de 2021 y terminará en mayo de 2022. Olympiakos es el campeón defensor.
 
-A continuación se muestra la lista de clubes que compiten en la Superliga 2021-22, con su respectiva ubicación y estadio.
+#### 2020-2021
+La temporada inició el 11 de septiembre de 2020 y finalizó el 19 mayo 2021.  El campeón fue Olympiakos y 
+Descendieron Panaitolikos y AE Larisa.  LOs partidos se disputaron con público a partir del 24 de octubre de 2020 con el 10% del aforo.
+
+#### 2019-2020
+La temporada comenzó el 24 de agosto de 2019 y finalizó el 19 de julio de 2020.  El campeón fue Olympiakos y 
+Descendieron Xanthi y Panionios.  Los partidos posteriores al 1 de marzo de 2020 se disputaron sin público.
+
+#### 2018-2019
+La temporada comenzó el 25 de agosto de 2018 y finalizó el 12 de mayo de 2019. El PAOK de Atenas fue el campeón.
+Descendieron  Giannina, Levadiakos y Apollon Smyrnis. Asciende Volos.
+
+### Estadios 
+A continuación se muestra la lista de clubes que compiten en la Superliga 2021-22, con su respectiva ubicación y capacidad de estadio cuando juegan de local.
 
 Equipo              | Ciudad       | Estadio                          | Capacidad
 ------------------- | ------------ | -------------------------------  | ----------
@@ -173,16 +188,14 @@ Olympiakos          | Piraeus      | Estadio Georgios Karaiskakis     | 32.115
 Panathinaikos       | Atenas       | Estadio Apostolos Nikolaidis     | 16.620
 Panetolikos         | Agrinio      | Estadio Panetolikos              |  7.321
 PAOK Salónica       | Thessaloni   | Estadio La Tumba                 | 28.703
-PAS Gianni          | Ioannina     | Estadio Zosimades                |  7.652
+PAS Giannina        | Ioannina     | Estadio Zosimades                |  7.652
 Volos               | Volos        | Estadio Panthessaliko            | 22.700
-
 
 # Sobre los datos
 
-## Recolección 
+## Recolección {.tabset .tabset-fade .tabset-pills}
 
-Los datos recolectados por nuestro equipo, destinados a realizar el análisis del cuál nos ocupamos en este proyecto es el siguiente.
-
+Los datos proceden de fuente propia producto de la recolección por parte de nuestro equipo y se dispusieron en tres 3 bases de datos: Temporada 2018-2019, Temporada 2019-2020 y Temporada 2020-2021. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 
@@ -193,26 +206,27 @@ base2021 = read_excel("Grecia.xlsx", sheet = 1)
 
 ```
 
-# Caracterización de las bases de datos.
-Se utilizaron 3 bases de datos: Temporada 2018-2019, Temporada 2019-2020 y Temporada 2020-2021.
+### Temporada 2018-1019
+En esta base de datos se encuentran la información de los partidos disputados en la temporada 2018-2019 de la  Superliga de Grecia, distribuida en `r ncol(base1819)` columnas y `r nrow(base1819)` observaciones.
 
-##Temporada 2018-1019
-El número de columnas que contiene la base de datos es de `r ncol(base1819)` y el número de registros cargados es de `r nrow(base1819)`.
+### Temporada 2019-2020
+En esta base de datos se encuentran la información de los partidos disputados en la temporada 2019-2020 de la  Superliga de Grecia, distribuida en `r ncol(base1920)` columnas y `r nrow(base1920)` observaciones.
 
-##Temporada 2019-2020
-El número de columnas que contiene la base de datos es de `r ncol(base1920)` y el número de registros cargados es de `r nrow(base1920)`.
+### Temporada 2020-2021
+En esta base de datos se encuentran la información de los partidos disputados en la temporada 2020-2021 de la  Superliga de Grecia, distribuida en `r ncol(base2021)` columnas y `r nrow(base2021)` observaciones.
 
-##Temporada 2020-2021
 El número de columnas que contiene la base de datos es de `r ncol(base2021)` y el número de registros cargados es de `r nrow(base2021)`.
 
-En vista de que las fuentes se van a unir para realizar el análisis, decidimos revisar antes la estructura de las bases para identificar sus diferencias y determinar cuales variables no son compartidas entre ellas.  Estas variables son presentadas a continuación.
+## Consolidación de los datos {.tabset .tabset-fade .tabset-pills}
 
+### Unión de las fuentes
+Al realizar el análisis para unir las fuentes mencionadas revisamos las diferencias en la estructura de cada una de ellas, a fin de determinar cuales son las variables de la fuente que dispondremos para el proyecto.
+
+_Tabla. Columnas con diferencias entre las bases de datos_
 ```{r}
 compare_df_cols(base1819, base1920, base2021, return = "mismatch", bind_method = "rbind")
 
 ```
-
-## Union de los datos
 
 ```{r}
 base18_20= union_all(base1819, base1920)
@@ -221,12 +235,15 @@ base18_21= union_all(base18_20, base2021)
 base_filtrada= base18_21[,c(2:22,41:47)]
 ```
 
-El número de columnas que contiene la nueva base de datos con las tres temporadas desde 2018 a 2021 es de `r ncol(base18_21)` y el número de registros cargados es de `r nrow(base18_21)` y cuenta con la información asociada a estadísticas de los partidos en grupos de variables que se refieren a 
+### Presentación de las variables
+
+En vista de que concluimos que las columnas no comunes a todas las fuentes no son relevantes para el proyecto, las desestimamos, lo cuál representa una nueva base de datos de información de los partidos disputados en las tres temporadas (2018-2019, 2019-2020 y 2020-2021) de la Superliga de Grecia, cuyas dimensiones son `r ncol(base18_21)`columnas y `r nrow(base18_21)` registros, caracterizada por grupos de variables que se refieren a:
+
 * Datos básicos del partido
 * Estadísticas del juego
 * Cuotas de casas de apuestas
 
-A partir de la investigación respecto al comportamiento de la liga y en consecuencia del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son de interés para el presente análisis:
+Adicionalmente, a partir de la investigación que hemos realizado respecto a la Superliga de Grecia, y en consecuencia del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son de interés para el presente análisis:
 
 ```{r}
 
@@ -244,15 +261,18 @@ rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(m
 paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_FINAL), sep = ", "), paste(min(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_MITAD), ", "), paste(min(base_filtrada$LOCAL_TIROS, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_CORNERS, na.rm = TRUE),max(base_filtrada$LOCAL_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE),max(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE),max(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE),max(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_ROJAS, na.rm = TRUE),max(base_filtrada$LOCAL_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE),max(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$Bb1X2, na.rm = TRUE),max(base_filtrada$Bb1X2, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxH, na.rm = TRUE),max(base_filtrada$BbMxH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxD, na.rm = TRUE),max(base_filtrada$BbMxD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvH, na.rm = TRUE),max(base_filtrada$BbAvH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvD, na.rm = TRUE),max(base_filtrada$BbAvD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxA, na.rm = TRUE),max(base_filtrada$BbMxA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvA, na.rm = TRUE),max(base_filtrada$BbAvA, na.rm = TRUE), sep = " a ") )
 
 tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
-knitr::kable(tabla_variables, "simple",   col.names = c('VARIABLE', 'TIPO DE VARIABLE', 'Rango o Categorías'), align = "ll", caption = "Tabla. Variables de análisis")
+knitr::kable(tabla_variables, "simple",   col.names = c('VARIABLE', 'TIPO DE VARIABLE', 'Rango o Categorías'), align = "ll", caption = "Tabla. Descripción de las Variables para el análisis")
 
 ```
 
 Una muestra de los datos se puede observar a continuación:
 
 ```{r}
-head(base_filtrada)
+head(base_filtrada[, 1:12])
 ```
+
+_Tabla. Muestra premilinar de los datos_
+
 
 # Detección de anomalías
 
@@ -308,7 +328,7 @@ base_filtrada$LOCAL_AMARILLAS       = as.integer(base_filtrada$LOCAL_AMARILLAS)
 base_filtrada$VISITANTE_AMARILLAS   = as.integer(base_filtrada$VISITANTE_AMARILLAS)
 base_filtrada$LOCAL_ROJAS           = as.integer(base_filtrada$LOCAL_ROJAS)
 base_filtrada$VISITANTE_ROJAS       = as.integer(base_filtrada$VISITANTE_ROJAS)
-base_filtrada$base_filtrada$BbMxH   = as.numeric(base_filtrada$BbMxH)	
+base_filtrada$BbMxH   = as.numeric(base_filtrada$BbMxH)	
 base_filtrada$BbAvH = as.numeric(base_filtrada$BbAvH)	
 base_filtrada$BbMxD = as.numeric(base_filtrada$BbMxD)	
 base_filtrada$BbAvD = as.numeric(base_filtrada$BbAvD)	
