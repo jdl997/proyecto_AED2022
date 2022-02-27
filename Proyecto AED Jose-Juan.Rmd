@@ -356,7 +356,7 @@ base_filtrada$VISITANTE_TIROS_PUERTA= as.integer(base_filtrada$VISITANTE_TIROS_P
 base_filtrada$LOCAL_TIROS_LIBRES    = as.integer(base_filtrada$LOCAL_TIROS_LIBRES)
 base_filtrada$VISITANTE_TIROS_LIBRES= as.integer(base_filtrada$VISITANTE_TIROS_LIBRES)
 base_filtrada$LOCAL_CORNERS         = as.integer(base_filtrada$LOCAL_CORNERS)
-base_filtrada$VISITANTE_CORNER      = as.integer(base_filtrada$VISITANTE_CORNERS)
+base_filtrada$VISITANTE_CORNERS      = as.integer(base_filtrada$VISITANTE_CORNERS)
 base_filtrada$LOCAL_AMARILLAS       = as.integer(base_filtrada$LOCAL_AMARILLAS)
 base_filtrada$VISITANTE_AMARILLAS   = as.integer(base_filtrada$VISITANTE_AMARILLAS)
 base_filtrada$LOCAL_ROJAS           = as.integer(base_filtrada$LOCAL_ROJAS)
@@ -385,7 +385,149 @@ base_filtrada[duplicated(base_filtrada),]
 base_filtrada= base_filtrada[!duplicated(base_filtrada), ]
 ```
 ### 3. Campos vacíos
+
+Tenemos 9 variables que tienen 481 NA's los cuales representan un 66% del dataset. Entraremos analizarlas
+```{r}
 summary(base_filtrada)
+```
+Nos damos cuenta que las siguientes 9 variables nulas se encuentran concentradas en 478 registros por lo que se deciden a borrar las siguientes columnas:
+LOCAL_TIROS_LIBRES
+VISITANTE_TIROS_LIBRES
+Bb1X2
+BbMxH
+BbAvH
+BbMxD
+BbAvD
+BbMxA
+BbAvA
+La mayoria de estas variables hacen referencia a cuotas de apuestas publicadas en BetBrain.
+```{r}
+base_filtrada[rowSums(is.na(base_filtrada))==9,]
+base_filtrada= subset( base_filtrada, select = -c(LOCAL_TIROS_LIBRES, VISITANTE_TIROS_LIBRES, Bb1X2, BbMxH, BbAvH, BbMxD, BbAvD, BbMxA, BbAvA) )
+str(base_filtrada)
+```
+De las variables restantes tambien encontramos una cantidad minima de NA's la cual entraremos analizar 
+```{r}
+summary(base_filtrada)
+```
+Encontramos que los anteriores NA's mencionados se distribuyen en 11 registros. La fila que solo contiene la fecha sera eliminada, mientras que las otras se les imputara los datos por medio de Web Scraping manual, a partir de la información de la siguiente pagina Web: [Estadisticas](https://www.transfermarkt.mx/)
+```{r}
+base_filtrada[rowSums(is.na(base_filtrada)) > 0,]
+base_filtrada = base_filtrada[!rowSums(is.na(base_filtrada)) > 15,]
+```
+
+```{r}
+## OFI Crete	VS PAOK
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 4
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 6
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 2
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 4
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 1
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 3
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 4
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 3
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete"]= 0
+
+## Atromitos	VS Lamia
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 8
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 9
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 5
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 5
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 6
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 3
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 1
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 1
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Atromitos"]= 1
+
+## Larisa	VS Panathinaikos
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 6
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 11
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 3
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 8
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 5
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 3
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 5
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 2
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Larisa"]= 0
+
+## Olympiakos	VS Asteras Tripolis
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 13
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 7
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 10
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 4
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 2
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 4
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 2
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 2
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Olympiakos"]= 0
+
+## Xanthi VS	Panetolikos
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 17
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 2
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 7
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 2
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 10
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 0
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 3
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 2
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2018-09-16") & base_filtrada$EQUIPO_LOCAL== "Xanthi"]= 0
+
+## Aris	VS Levadeiakos
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 8
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 11
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 3
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 4
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 4
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 3
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 3
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 4
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris"]= 0
+
+## Panionios VS Atromitos
+base_filtrada$LOCAL_GOLES[base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios"]= 2
+base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios"]= 2
+
+## Panathinaikos VS	Olympiakos
+base_filtrada$LOCAL_GOLES[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
+base_filtrada$RESULTADO_FINAL[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "A"
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 6
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 12
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 5
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 4
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 2
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+
+## Panathinaikos	VS OFI Crete
+base_filtrada$LOCAL_GOLES_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+base_filtrada$VISITANTE_GOLES_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
+base_filtrada$RESULTADO_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "A"
+base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 4
+base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 10
+base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
+base_filtrada$VISITANTE_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 5
+base_filtrada$LOCAL_CORNERS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
+base_filtrada$VISITANTE_CORNERS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
+base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 6
+base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
+base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
+base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+```
+
+```{r}
+base_filtrada[base_filtrada$FECHA == as.Date("2018-09-16") | (base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete") | (base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris") | (base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios") | (base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") |(base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") ,]
+```
+
 
 
 ### 4. Datos atípicos
