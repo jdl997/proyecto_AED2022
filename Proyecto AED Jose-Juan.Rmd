@@ -253,21 +253,81 @@ head(base_filtrada)
 # Detección de anomalías
 
 ### 1. Formato de las variables no coincide con su tipo de variable
+
+Equipo Fecha
+```{r}
+base_filtrada$Date = as.Date(base_filtrada$Date,format= "%Y-%m-%d")
+tabla_freq(base_filtrada$Date)
+
+```
+
+Equipo Local
 ```{r}
 base_filtrada$ HomeTeam = factor(base_filtrada$HomeTeam)
+tabla_freq(base_filtrada$HomeTeam)
+
+```
+
+Equipo visitante
+```{r}
 base_filtrada$AwayTeam = factor(base_filtrada$AwayTeam)
+tabla_freq(base_filtrada$AwayTeam)
+```
+
+Resultado al finalizar el partido
+```{r}
 base_filtrada$FTR = factor(base_filtrada$FTR)
+tabla_freq(base_filtrada$FTR)
+```
+
+Resultado al finalizar en el primer tiempo
+```{r}
 base_filtrada$HTR = factor(base_filtrada$HTR)
+tabla_freq(base_filtrada$HTR)
+
+```
+Casteada de variables cuantitativa discreta(integer) y continua (numeric)
+```{r}
+base_filtrada$FTHG = as.integer(base_filtrada$FTHG)	
+base_filtrada$FTAG = as.integer(base_filtrada$FTAG)		
+base_filtrada$HTHG = as.integer(base_filtrada$HTHG)	
+base_filtrada$HTAG = as.integer(base_filtrada$HTAG)		
+base_filtrada$HS = as.integer(base_filtrada$HS)	
+base_filtrada$AS = as.integer(base_filtrada$AS)	
+base_filtrada$HST = as.integer(base_filtrada$HST)	
+base_filtrada$AST = as.integer(base_filtrada$AST)	
+base_filtrada$HFKC = as.integer(base_filtrada$HFKC)	
+base_filtrada$AFKC = as.integer(base_filtrada$AFKC)	
+base_filtrada$HC = as.integer(base_filtrada$HC)	
+base_filtrada$AC = as.integer(base_filtrada$AC)	
+base_filtrada$HY = as.integer(base_filtrada$HY)	
+base_filtrada$AY = as.integer(base_filtrada$AY)	
+base_filtrada$HR = as.integer(base_filtrada$HR)	
+base_filtrada$AR = as.integer(base_filtrada$AR)	
+
+base_filtrada$BbMxH = as.numeric(base_filtrada$BbMxH)	
+base_filtrada$BbAvH = as.numeric(base_filtrada$BbAvH)	
+base_filtrada$BbMxD = as.numeric(base_filtrada$BbMxD)	
+base_filtrada$BbAvD = as.numeric(base_filtrada$BbAvD)	
+base_filtrada$BbMxA = as.numeric(base_filtrada$BbMxA)	
+base_filtrada$BbAvA = as.numeric(base_filtrada$BbAvA)
+
+base_filtrada$HTR = factor(base_filtrada$HTR)
+tabla_freq(base_filtrada$HTR)
+str(base_filtrada)
 ```
 
 ### 2. Valores de variables no validas
 
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
-Aunque 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana.
+Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana. 
 ```{r}
 tabla_freq(base_filtrada$FTHG)
 ```
-
+Se procede a identificar los registros invalidos y atipicos para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web 
+```{r}
+base_filtrada[base_filtrada$FTHG>]
+```
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del visitante al terminar el partido).
 ```{r}
 tabla_freq(base_filtrada$FTAG)
