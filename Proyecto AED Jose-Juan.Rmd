@@ -1,5 +1,9 @@
 ---
-title: "Análisis del rendimiento de los equipos de fútbol en tiempos de pandemia: El caso de la Súperliga de Grecia"
+title: "Análisis del rendimiento de los equipos de fútbol en tiempos de pandemia"
+subtitle: "El caso de la Súperliga de Grecia"
+author: 
+ - name: "Juan David López"
+ - name: "Jose Guerrero"
 output:
   rmdformats::material:
     self_contained: true
@@ -12,7 +16,7 @@ output:
 pkgdown:
   as_is: true    
 ---
-```{r global_options, echo=FALSE}
+```{r global_options, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
 knitr::opts_chunk$set(fig.path="", message=FALSE, warning=FALSE,
                       echo=FALSE, results="show", fig.width=11)
 ```
@@ -126,7 +130,7 @@ tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
 ```
 
 # Introducción
-El 11 de marzo de 2020, la Organización Mundial de la Salud declaró una pandemia. Rápidamente se paralizó el mundo. El 11 de marzo de 2021, se confirmaron 117.573.007 casos y se registraron 2.610.925 muertes ([OMS](https://www.frontiersin.org/articles/10.3389/fspor.2021.695922/full#B36)). Los países afectados aplicaron diversos niveles de respuesta a lo largo del año, incluyendo restricciones sociales y cierres laborales, que impactaron de manera importante a las sociedades, más allá de los daños sanitarios directamente atribuidos al COVID-19. En vista de las masas que mueve el deporte, especialmente el deporte de élite, este tipo de eventos se debió suspender. Eventos deportivos como los Juegos Olímpicos y Paralímpicos de Tokio fueron aplazados. Gracias a la evolución en los tratamientos y a la aplicación de estrictos protocolos sanitarios, algunos campeonatos profesionales se reanudaron con algunas restricciones cómo la de efectuarse a puerta cerrada en estadios vacíos. Bajo estas nuevas circunstancias, surge la inquietud al respecto de **cómo esta situación extraordinaria afectó el rendimiento de los equipos de fútbol de las ligas europeas**, en vista de la supuesta ventaja que ofrecían los estadio con la mayoría de espectadores alentando al equipo local. Según estudios ^1^ la ventaja de jugar de local se soporta en datos que demuestran de manera consistente que los equipos locales ganan más del 50% de los partidos jugados con un calendario equilibrado de local y visitante.
+El 11 de marzo de 2020, la Organización Mundial de la Salud declaró una pandemia. Rápidamente se fue paralizando el mundo. A esa fecha se habían confirmado 117.573.007 casos y registrado [2.610.925 muertes](https://www.frontiersin.org/articles/10.3389/fspor.2021.695922/full#B36). Los países afectados se vieron en la necesidad de implementar diferentes tipos de restricción que impactaron la manera en que estábamos acostumbrados a movilizarnos, más allá del impacto en salubridad por el COVID-19. En vista de las masas que mueve el deporte, entre otros espectáculos, este tipo de eventos se debió suspender. Entre otros, los Juegos Olímpicos y Paralímpicos de Tokio fueron aplazados. Gracias a la evolución en los tratamientos y a la aplicación de estrictos protocolos sanitarios, algunos campeonatos profesionales se reanudaron con algunas restricciones, por ejempo, limitados a realizarse a puerta cerrada en estadios vacíos. Bajo estas nuevas circunstancias, surge la inquietud al respecto de **cómo esta situación extraordinaria afectó el rendimiento de los equipos de fútbol**, en vista de la supuesta ventaja que ofrecían los juegos de local al contar con la mayoría de espectadores alentando. Según estudios ^1^ basados en datos históricos, los equipos locales ganan de manera consistente más del 50% de los partidos jugados sobre un calendario equilibrado en juegos de local y visitante.
 
 Nuestra firma, siempre interesada en producir valiosos insights para nuestros clientes y en atención a su solicitud al respecto, dedicó a uno de sus equipos de analítica a estudiar esta incógnita enfocado particularmente en dicho efecto sobre los equipos de la Súperliga de fútbol de Grecia. 
 
@@ -134,9 +138,8 @@ Los datos sobre los cuales está sustentado este análisis provienen de nuestra 
 
 Este informe aporta a continuación algo de contexto respecto a la súperliga de Grecia y cuenta con cuatro secciones adicionales: en la primera, presentamos detalles respecto a los datos recolectados y a su estructura de variables; en la segunda nos referimos a los hallazgos en materia de anomalías y a las transformaciones realizadas en consecuencia. La tercera sección describe las variables que adicionamos para favorecer a los trabajos futuros y la última sección contempla algunas conclusiones acerca del proceso, así como, algunas recomendaciones de interés para los equipos de recolección de datos.
 
-<font face="Courier New" size=2 align="left" >
-
-(1) Ref. _Courneya, K. S., and Carron, A. V. (1992). The home advantage in sport competitions: a literature review. J. Sport Exerc. Psychol. 14, 13–27. doi: 10.1123/jsep.14.1.13_
+<font face="Courier New" size=1 align="left" >
+/1. Ref. _Courneya, K. S., and Carron, A. V. (1992). The home advantage in sport competitions: a literature review. J. Sport Exerc. Psychol. 14, 13–27. doi: 10.1123/jsep.14.1.13_
 
 </font>
 
@@ -145,7 +148,7 @@ Este informe aporta a continuación algo de contexto respecto a la súperliga de
 La Superliga de Grecia (en griego, Ελληνική Σούπερ Λίγκα) es una competición entre clubes de fútbol de Grecia. Es la primera división del fútbol griego.
 
 ![](liga_griega_resumen.jpg)
-Fuente. Transfermarkt.es
+<font size=1> *Fuente. Transfermarkt.es* </font>
 
 ### Sistema de competición
 
@@ -155,7 +158,9 @@ Los 14 equipos participantes juegan entre sí todos contra todos a dos ruedas, t
 
 A partir de noviembre de 2021, la Superliga griega ocupa el puesto 19 en la clasificación de ligas de la UEFA, basada en los resultados de las competiciones europeas de los últimos cinco años. Desde la fundación del primer Campeonato Panhelénico oficial en 1927, *sólo seis clubes han ganado el título*.
 
-### Temporadas 2021-2022 {.tabset .tabset-fade .tabset-pills}
+### Temporadas 2018-2022 {.tabset .tabset-fade .tabset-pills}
+
+En función de aportar elementos de contexto a nuestro análisis, algunos datos de interés que hicieron parte de nuestra investigación son:
 
 #### 2021-2022
 La temporada 2021-22 es la edición número 85 de la Superliga de Grecia. La misma comenzó el 11 de septiembre de 2021 y terminará en mayo de 2022. Olympiakos es el campeón defensor.
@@ -191,6 +196,8 @@ PAOK Salónica       | Thessaloni   | Estadio La Tumba                 | 28.703
 PAS Giannina        | Ioannina     | Estadio Zosimades                |  7.652
 Volos               | Volos        | Estadio Panthessaliko            | 22.700
 
+En contexto, la capacidad de los estadios puede determinar la influencia mayor o menor que algunos equipos tienen al jugar de local, en vista por supuesto de la amplia diferencia en capacidad de espectadores que moviliza.  
+
 # Sobre los datos
 
 ## Recolección {.tabset .tabset-fade .tabset-pills}
@@ -222,12 +229,15 @@ El número de columnas que contiene la base de datos es de `r ncol(base2021)` y 
 ### Unión de las fuentes
 Al realizar el análisis para unir las fuentes mencionadas revisamos las diferencias en la estructura de cada una de ellas, a fin de determinar cuales son las variables de la fuente que dispondremos para el proyecto.
 
+<font size=2>
 _Tabla. Columnas con diferencias entre las bases de datos_
 ```{r}
 compare_df_cols(base1819, base1920, base2021, return = "mismatch", bind_method = "rbind")
 
 ```
+</font>
 
+### Presentación de las variables
 ```{r}
 base18_20= union_all(base1819, base1920)
 base18_21= union_all(base18_20, base2021)
@@ -235,16 +245,15 @@ base18_21= union_all(base18_20, base2021)
 base_filtrada= base18_21[,c(2:22,41:47)]
 ```
 
-### Presentación de las variables
-
-En vista de que concluimos que las columnas no comunes a todas las fuentes no son relevantes para el proyecto, las desestimamos, lo cuál representa una nueva base de datos de información de los partidos disputados en las tres temporadas (2018-2019, 2019-2020 y 2020-2021) de la Superliga de Grecia, cuyas dimensiones son `r ncol(base18_21)`columnas y `r nrow(base18_21)` registros, caracterizada por grupos de variables que se refieren a:
+Unir las fuentes nos representó una nueva base de datos de información de los partidos disputados en las tres temporadas (2018-2019, 2019-2020 y 2020-2021) de la Superliga de Grecia, cuyas dimensiones son `r ncol(base18_21)` columnas y `r nrow(base18_21)` registros, caracterizada por grupos de variables que se refieren a:
 
 * Datos básicos del partido
 * Estadísticas del juego
 * Cuotas de casas de apuestas
 
-Adicionalmente, a partir de la investigación que hemos realizado respecto a la Superliga de Grecia, y en consecuencia del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son de interés para el presente análisis:
+Usando información derivada del análisis de diferencias en las columnas no comunes a todas las fuentes, además de nuestra investigación respecto a la Superliga de Grecia y en consecuencia del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son definitivamente las variables de interés para el presente análisis y sobre ellas desarrollaremos las actividades de aseguramiento de calidad en los datos.
 
+<font size=2>
 ```{r}
 
 # declaring the columns of data frame
@@ -257,20 +266,23 @@ columnas= colnames(base_filtrada)
 Tipo_variables = c( 
   "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta",  "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Contínua","Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua") 
 
-rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(max(base_filtrada$FECHA),"%d-%m-%Y"),sep = " a "), collapse(unique(base_filtrada$EQUIPO_LOCAL), sep = ", "), collapse(unique(base_filtrada$EQUIPO_VISITANTE),sep = ", "),
+rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(max(base_filtrada$FECHA),"%d-%m-%Y"),sep = " a "), collapse(sort(unique(base_filtrada$EQUIPO_LOCAL[!is.na(base_filtrada$EQUIPO_LOCAL)])), sep = ", "), collapse(sort(unique(base_filtrada$EQUIPO_VISITANTE[!is.na(base_filtrada$EQUIPO_VISITANTE)])), sep = ", "),
 paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_FINAL), sep = ", "), paste(min(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_MITAD), ", "), paste(min(base_filtrada$LOCAL_TIROS, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_CORNERS, na.rm = TRUE),max(base_filtrada$LOCAL_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE),max(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE),max(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE),max(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_ROJAS, na.rm = TRUE),max(base_filtrada$LOCAL_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE),max(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$Bb1X2, na.rm = TRUE),max(base_filtrada$Bb1X2, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxH, na.rm = TRUE),max(base_filtrada$BbMxH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxD, na.rm = TRUE),max(base_filtrada$BbMxD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvH, na.rm = TRUE),max(base_filtrada$BbAvH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvD, na.rm = TRUE),max(base_filtrada$BbAvD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxA, na.rm = TRUE),max(base_filtrada$BbMxA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvA, na.rm = TRUE),max(base_filtrada$BbAvA, na.rm = TRUE), sep = " a ") )
 
 tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
-knitr::kable(tabla_variables, "simple",   col.names = c('VARIABLE', 'TIPO DE VARIABLE', 'Rango o Categorías'), align = "ll", caption = "Tabla. Descripción de las Variables para el análisis")
+knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Tabla. Descripción de las Variables para el análisis")
 
 ```
+</font>
 
 Una muestra de los datos se puede observar a continuación:
+<font size=1>
+```{r echo=FALSE}
 
-```{r}
-head(base_filtrada[, 1:12])
+head(base_filtrada)
+
 ```
-
+</font>
 _Tabla. Muestra premilinar de los datos_
 
 
@@ -519,4 +531,6 @@ base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== 33]= 3
 base_filtrada[(base_filtrada$FECHA == as.Date("2020-06-20") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-01-17") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-03-21") & base_filtrada$EQUIPO_LOCAL == "PAOK"),]
 ```
 
-### 5. Errores de digitación:
+# Creación de Variables
+
+# Conclusiones y recomendaciones
