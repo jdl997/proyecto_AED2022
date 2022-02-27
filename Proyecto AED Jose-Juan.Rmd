@@ -218,7 +218,7 @@ compare_df_cols(base1819, base1920, base2021, return = "mismatch", bind_method =
 base18_20= union_all(base1819, base1920)
 base18_21= union_all(base18_20, base2021)
 
-base_filtrada= base18_21[,c(2:22,42:47)]
+base_filtrada= base18_21[,c(2:22,41:47)]
 ```
 
 El número de columnas que contiene la nueva base de datos con las tres temporadas desde 2018 a 2021 es de `r ncol(base18_21)` y el número de registros cargados es de `r nrow(base18_21)` y cuenta con la información asociada a estadísticas de los partidos en grupos de variables que se refieren a 
@@ -226,27 +226,31 @@ El número de columnas que contiene la nueva base de datos con las tres temporad
 * Estadísticas del juego
 * Cuotas de casas de apuestas
 
-A partir de la investigación respecto al comportamiento de la liga y del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son de interés para el presente análisis:
+A partir de la investigación respecto al comportamiento de la liga y en consecuencia del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes `r ncol(base_filtrada)` columnas son de interés para el presente análisis:
 
 ```{r}
 
 # declaring the columns of data frame
 # assigning new names to the columns of the data frame
-##colnames(base_filtrada) <- c('FECHA','EQUIPO_LOCAL','EQUIPO_VISITANTE','','','','')
+colnames(base_filtrada) <- c('FECHA','EQUIPO_LOCAL','EQUIPO_VISITANTE','LOCAL_GOLES','VISITANTE_GOLES','RESULTADO_FINAL','LOCAL_GOLES_MITAD', 'VISITANTE_GOLES_MITAD', 'RESULTADO_MITAD', 'LOCAL_TIROS', 'VISITANTE_TIROS', 'LOCAL_TIROS_PUERTA', 'VISITANTE_TIROS_PUERTA', 'LOCAL_TIROS_LIBRES', 'VISITANTE_TIROS_LIBRES', 'LOCAL_CORNERS', 'VISITANTE_CORNERS', 'LOCAL_AMARILLAS', 'VISITANTE_AMARILLAS', 'LOCAL_ROJAS', 'VISITANTE_ROJAS', 'Bb1X2', 'BbMxH', 'BbAvH', 'BbMxD', 'BbAvD', 'BbMxA', 'BbAvA')
 
 # printing new data frame
 
-## CREAR CUADRO CON VARIABLES CUALI / CUANTI
+columnas= colnames(base_filtrada)
+Tipo_variables = c( 
+  "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta",  "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Contínua","Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua") 
 
-##columnas= colnames(base_filtrada)
-##Tipo_variables= c("Cuantitativa Discreta","Cualitativa Nominal","Cualitativa Ordinal","Cualitativa ##Nominal","Cualitativa Nominal","Cualitativa Ordinal","Cualitativa Nominal","Cualitativa Ordinal","Cuantitativa ##Discreta","Cuantitativa Discreta","Cuantitativa Discreta","Cuantitativa Discreta","Cuantitativa ##Discreta","Cuantitativa Discreta","Cualitativa Nominal","Cualitativa Nominal","Cualitativa Ordinal","Cualitativa ##Ordinal")
-##tabla_variables <- data.frame (columnas, Tipo_variables)
-##knitr::kable(tabla_variables, "simple")
+rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(max(base_filtrada$FECHA),"%d-%m-%Y"),sep = " a "), collapse(unique(base_filtrada$EQUIPO_LOCAL), sep = ", "), collapse(unique(base_filtrada$EQUIPO_VISITANTE),sep = ", "),
+paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_FINAL), sep = ", "), paste(min(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_MITAD), ", "), paste(min(base_filtrada$LOCAL_TIROS, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_CORNERS, na.rm = TRUE),max(base_filtrada$LOCAL_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE),max(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE),max(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE),max(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_ROJAS, na.rm = TRUE),max(base_filtrada$LOCAL_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE),max(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$Bb1X2, na.rm = TRUE),max(base_filtrada$Bb1X2, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxH, na.rm = TRUE),max(base_filtrada$BbMxH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxD, na.rm = TRUE),max(base_filtrada$BbMxD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvH, na.rm = TRUE),max(base_filtrada$BbAvH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvD, na.rm = TRUE),max(base_filtrada$BbAvD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxA, na.rm = TRUE),max(base_filtrada$BbMxA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvA, na.rm = TRUE),max(base_filtrada$BbAvA, na.rm = TRUE), sep = " a ") )
+
+tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
+knitr::kable(tabla_variables, "simple",   col.names = c('VARIABLE', 'TIPO DE VARIABLE', 'Rango o Categorías'), align = "ll", caption = "Tabla. Variables de análisis")
 
 ```
-```{r}
-## Head bonito
 
+Una muestra de los datos se puede observar a continuación:
+
+```{r}
 head(base_filtrada)
 ```
 
@@ -256,64 +260,63 @@ head(base_filtrada)
 
 Equipo Fecha
 ```{r}
-base_filtrada$Date = as.Date(base_filtrada$Date,format= "%Y-%m-%d")
-tabla_freq(base_filtrada$Date)
+base_filtrada$FECHA = as.Date(base_filtrada$FECHA,format= "%Y-%m-%d")
+tabla_freq(base_filtrada$FECHA)
 
 ```
 
 Equipo Local
 ```{r}
-base_filtrada$ HomeTeam = factor(base_filtrada$HomeTeam)
-tabla_freq(base_filtrada$HomeTeam)
+base_filtrada$EQUIPO_LOCAL = factor(base_filtrada$EQUIPO_LOCAL)
+tabla_freq(base_filtrada$EQUIPO_LOCAL)
 
 ```
 
 Equipo visitante
 ```{r}
-base_filtrada$AwayTeam = factor(base_filtrada$AwayTeam)
-tabla_freq(base_filtrada$AwayTeam)
+base_filtrada$EQUIPO_VISITANTE = factor(base_filtrada$EQUIPO_VISITANTE)
+tabla_freq(base_filtrada$EQUIPO_VISITANTE)
 ```
 
 Resultado al finalizar el partido
 ```{r}
-base_filtrada$FTR = factor(base_filtrada$FTR)
-tabla_freq(base_filtrada$FTR)
+base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL)
+tabla_freq(base_filtrada$RESULTADO_FINAL)
 ```
 
 Resultado al finalizar en el primer tiempo
 ```{r}
-base_filtrada$HTR = factor(base_filtrada$HTR)
-tabla_freq(base_filtrada$HTR)
+base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
+tabla_freq(base_filtrada$RESULTADO_MITAD)
 
 ```
 Casteada de variables cuantitativa discreta(integer) y continua (numeric)
 ```{r}
-base_filtrada$FTHG = as.integer(base_filtrada$FTHG)	
-base_filtrada$FTAG = as.integer(base_filtrada$FTAG)		
-base_filtrada$HTHG = as.integer(base_filtrada$HTHG)	
-base_filtrada$HTAG = as.integer(base_filtrada$HTAG)		
-base_filtrada$HS = as.integer(base_filtrada$HS)	
-base_filtrada$AS = as.integer(base_filtrada$AS)	
-base_filtrada$HST = as.integer(base_filtrada$HST)	
-base_filtrada$AST = as.integer(base_filtrada$AST)	
-base_filtrada$HFKC = as.integer(base_filtrada$HFKC)	
-base_filtrada$AFKC = as.integer(base_filtrada$AFKC)	
-base_filtrada$HC = as.integer(base_filtrada$HC)	
-base_filtrada$AC = as.integer(base_filtrada$AC)	
-base_filtrada$HY = as.integer(base_filtrada$HY)	
-base_filtrada$AY = as.integer(base_filtrada$AY)	
-base_filtrada$HR = as.integer(base_filtrada$HR)	
-base_filtrada$AR = as.integer(base_filtrada$AR)	
-
-base_filtrada$BbMxH = as.numeric(base_filtrada$BbMxH)	
+base_filtrada$LOCAL_GOLES           = as.integer(base_filtrada$LOCAL_GOLES)
+base_filtrada$VISITANTE_GOLES       = as.integer(base_filtrada$VISITANTE_GOLES)
+base_filtrada$LOCAL_GOLES_MITAD     = as.integer(base_filtrada$LOCAL_GOLES_MITAD)
+base_filtrada$VISITANTE_GOLES_MITAD = as.integer(base_filtrada$VISITANTE_GOLES_MITAD)
+base_filtrada$LOCAL_TIROS           = as.integer(base_filtrada$LOCAL_TIROS)
+base_filtrada$VISITANTE_TIROS       = as.integer(base_filtrada$VISITANTE_TIROS)
+base_filtrada$LOCAL_TIROS_PUERTA    = as.integer(base_filtrada$LOCAL_TIROS_PUERTA)
+base_filtrada$VISITANTE_TIROS_PUERTA= as.integer(base_filtrada$VISITANTE_TIROS_PUERTA)
+base_filtrada$LOCAL_TIROS_LIBRES    = as.integer(base_filtrada$LOCAL_TIROS_LIBRES)
+base_filtrada$VISITANTE_TIROS_LIBRES= as.integer(base_filtrada$VISITANTE_TIROS_LIBRES)
+base_filtrada$LOCAL_CORNERS         = as.integer(base_filtrada$LOCAL_CORNERS)
+base_filtrada$VISITANTE_CORNER      = as.integer(base_filtrada$VISITANTE_CORNERS)
+base_filtrada$LOCAL_AMARILLAS       = as.integer(base_filtrada$LOCAL_AMARILLAS)
+base_filtrada$VISITANTE_AMARILLAS   = as.integer(base_filtrada$VISITANTE_AMARILLAS)
+base_filtrada$LOCAL_ROJAS           = as.integer(base_filtrada$LOCAL_ROJAS)
+base_filtrada$VISITANTE_ROJAS       = as.integer(base_filtrada$VISITANTE_ROJAS)
+base_filtrada$base_filtrada$BbMxH   = as.numeric(base_filtrada$BbMxH)	
 base_filtrada$BbAvH = as.numeric(base_filtrada$BbAvH)	
 base_filtrada$BbMxD = as.numeric(base_filtrada$BbMxD)	
 base_filtrada$BbAvD = as.numeric(base_filtrada$BbAvD)	
 base_filtrada$BbMxA = as.numeric(base_filtrada$BbMxA)	
 base_filtrada$BbAvA = as.numeric(base_filtrada$BbAvA)
 
-base_filtrada$HTR = factor(base_filtrada$HTR)
-tabla_freq(base_filtrada$HTR)
+base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
+tabla_freq(base_filtrada$RESULTADO_MITAD)
 str(base_filtrada)
 ```
 
@@ -322,13 +325,13 @@ str(base_filtrada)
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
 Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana. 
 ```{r}
-tabla_freq(base_filtrada$FTHG)
+tabla_freq(base_filtrada$LOCAL_GOLES)
 ```
 Se procede a identificar los registros invalidos y atipicos para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web 
 ```{r}
-base_filtrada[base_filtrada$FTHG>]
+##base_filtrada[base_filtrada$LOCAL_GOLES>]
 ```
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del visitante al terminar el partido).
 ```{r}
-tabla_freq(base_filtrada$FTAG)
+tabla_freq(base_filtrada$VISITANTE_GOLES)
 ```

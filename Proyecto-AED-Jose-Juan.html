@@ -212,6 +212,7 @@
 <ul>
 <li><a href="#introducción">Introducción</a></li>
 <li><a href="#sobre-los-datos">Sobre los datos</a></li>
+<li><a href="#caracterización-de-las-bases-de-datos.">Caracterización de las bases de datos.</a></li>
 <li><a href="#detección-de-anomalías">Detección de anomalías</a></li>
 </ul>
 </div>
@@ -348,12 +349,16 @@
 <div id="recolección" class="section level2">
 <h2>Recolección</h2>
 <p>Los datos recolectados por nuestro equipo, destinados a realizar el análisis del cuál nos ocupamos en este proyecto es el siguiente.</p>
-<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">setwd</span>(<span class="st">&quot;./&quot;</span>)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>base1819 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&quot;Grecia.xlsx&quot;</span>, <span class="at">sheet =</span> <span class="dv">3</span>)</span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>base1920 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&quot;Grecia.xlsx&quot;</span>, <span class="at">sheet =</span> <span class="dv">2</span>)</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>base2021 <span class="ot">=</span> <span class="fu">read_excel</span>(<span class="st">&quot;Grecia.xlsx&quot;</span>, <span class="at">sheet =</span> <span class="dv">1</span>)</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_df_cols</span>(base1819, base1920, base2021, <span class="at">return =</span> <span class="st">&quot;mismatch&quot;</span>, <span class="at">bind_method =</span> <span class="st">&quot;rbind&quot;</span>)</span></code></pre></div>
+</div>
+</div>
+<div id="caracterización-de-las-bases-de-datos." class="section level1">
+<h1>Caracterización de las bases de datos.</h1>
+<p>Se utilizaron 3 bases de datos: Temporada 2018-2019, Temporada 2019-2020 y Temporada 2020-2021.</p>
+<p>##Temporada 2018-1019 El número de columnas que contiene la base de datos es de 61 y el número de registros cargados es de 240.</p>
+<p>##Temporada 2019-2020 El número de columnas que contiene la base de datos es de 105 y el número de registros cargados es de 243.</p>
+<p>##Temporada 2020-2021 El número de columnas que contiene la base de datos es de 105 y el número de registros cargados es de 250.</p>
+<p>En vista de que las fuentes se van a unir para realizar el análisis, decidimos revisar antes la estructura de las bases para identificar sus diferencias y determinar cuales variables no son compartidas entre ellas. Estas variables son presentadas a continuación.</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">compare_df_cols</span>(base1819, base1920, base2021, <span class="at">return =</span> <span class="st">&quot;mismatch&quot;</span>, <span class="at">bind_method =</span> <span class="st">&quot;rbind&quot;</span>)</span></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -872,31 +877,2294 @@
 </tbody>
 </table>
 </div>
-</div>
-<div id="union-de-las-tablas" class="section level2">
-<h2>Union de las tablas</h2>
-<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>base18_20<span class="ot">=</span> <span class="fu">union_all</span>(base1819,base1920)</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>base18_21<span class="ot">=</span> <span class="fu">union_all</span>(base18_20,base2021)</span>
+<div id="union-de-los-datos" class="section level2">
+<h2>Union de los datos</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>base18_20<span class="ot">=</span> <span class="fu">union_all</span>(base1819, base1920)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>base18_21<span class="ot">=</span> <span class="fu">union_all</span>(base18_20, base2021)</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="ot">=</span> base18_21[,<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">22</span>,<span class="dv">42</span><span class="sc">:</span><span class="dv">47</span>)]</span></code></pre></div>
-<p>Temporada 2018-1019 El número de columnas que contiene la base de datos es de 61 y el número de registros cargados es de 240.</p>
-<p>Temporada 2019-2020 El número de columnas que contiene la base de datos es de 105 y el número de registros cargados es de 243.</p>
-<p>Temporada 2020-2021 El número de columnas que contiene la base de datos es de 105 y el número de registros cargados es de 250.</p>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="ot">=</span> base18_21[,<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">22</span>,<span class="dv">41</span><span class="sc">:</span><span class="dv">47</span>)]</span></code></pre></div>
+<p>El número de columnas que contiene la nueva base de datos con las tres temporadas desde 2018 a 2021 es de 125 y el número de registros cargados es de 733 y cuenta con la información asociada a estadísticas de los partidos en grupos de variables que se refieren a * Datos básicos del partido * Estadísticas del juego * Cuotas de casas de apuestas</p>
+<p>A partir de la investigación respecto al comportamiento de la liga y en consecuencia del objetivo que persigue el presente proyecto de analítica, determinamos que las siguientes 28 columnas son de interés para el presente análisis:</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># declaring the columns of data frame</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co"># assigning new names to the columns of the data frame</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(base_filtrada) <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">&#39;FECHA&#39;</span>,<span class="st">&#39;EQUIPO_LOCAL&#39;</span>,<span class="st">&#39;EQUIPO_VISITANTE&#39;</span>,<span class="st">&#39;LOCAL_GOLES&#39;</span>,<span class="st">&#39;VISITANTE_GOLES&#39;</span>,<span class="st">&#39;RESULTADO_FINAL&#39;</span>,<span class="st">&#39;LOCAL_GOLES_MITAD&#39;</span>, <span class="st">&#39;VISITANTE_GOLES_MITAD&#39;</span>, <span class="st">&#39;RESULTADO_MITAD&#39;</span>, <span class="st">&#39;LOCAL_TIROS&#39;</span>, <span class="st">&#39;VISITANTE_TIROS&#39;</span>, <span class="st">&#39;LOCAL_TIROS_PUERTA&#39;</span>, <span class="st">&#39;VISITANTE_TIROS_PUERTA&#39;</span>, <span class="st">&#39;LOCAL_TIROS_LIBRES&#39;</span>, <span class="st">&#39;VISITANTE_TIROS_LIBRES&#39;</span>, <span class="st">&#39;LOCAL_CORNERS&#39;</span>, <span class="st">&#39;VISITANTE_CORNERS&#39;</span>, <span class="st">&#39;LOCAL_AMARILLAS&#39;</span>, <span class="st">&#39;VISITANTE_AMARILLAS&#39;</span>, <span class="st">&#39;LOCAL_ROJAS&#39;</span>, <span class="st">&#39;VISITANTE_ROJAS&#39;</span>, <span class="st">&#39;Bb1X2&#39;</span>, <span class="st">&#39;BbMxH&#39;</span>, <span class="st">&#39;BbAvH&#39;</span>, <span class="st">&#39;BbMxD&#39;</span>, <span class="st">&#39;BbAvD&#39;</span>, <span class="st">&#39;BbMxA&#39;</span>, <span class="st">&#39;BbAvA&#39;</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># printing new data frame</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>columnas<span class="ot">=</span> <span class="fu">colnames</span>(base_filtrada)</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>Tipo_variables <span class="ot">=</span> <span class="fu">c</span>( </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>  <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cualitativa Nominal&quot;</span>, <span class="st">&quot;Cualitativa Nominal&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cualitativa Nominal&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>,<span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cualitativa Nominal&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>,<span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>,  <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Discreta&quot;</span>, <span class="st">&quot;Cuantitativa Contínua&quot;</span>,<span class="st">&quot;Cuantitativa Contínua&quot;</span>, <span class="st">&quot;Cuantitativa Contínua&quot;</span>, <span class="st">&quot;Cuantitativa Contínua&quot;</span>, <span class="st">&quot;Cuantitativa Contínua&quot;</span>, <span class="st">&quot;Cuantitativa Contínua&quot;</span>) </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>rango_categorias <span class="ot">=</span> <span class="fu">c</span>( <span class="fu">paste</span>(<span class="fu">format</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>FECHA),<span class="st">&quot;%d-%m-%Y&quot;</span>),<span class="fu">format</span>(<span class="fu">max</span>(base_filtrada<span class="sc">$</span>FECHA),<span class="st">&quot;%d-%m-%Y&quot;</span>),<span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">collapse</span>(<span class="fu">unique</span>(base_filtrada<span class="sc">$</span>EQUIPO_LOCAL), <span class="at">sep =</span> <span class="st">&quot;, &quot;</span>), <span class="fu">collapse</span>(<span class="fu">unique</span>(base_filtrada<span class="sc">$</span>EQUIPO_VISITANTE),<span class="at">sep =</span> <span class="st">&quot;, &quot;</span>),</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">collapse</span>(<span class="fu">unique</span>(base_filtrada<span class="sc">$</span>RESULTADO_FINAL), <span class="at">sep =</span> <span class="st">&quot;, &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES_MITAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES_MITAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES_MITAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES_MITAD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">collapse</span>(<span class="fu">unique</span>(base_filtrada<span class="sc">$</span>RESULTADO_MITAD), <span class="st">&quot;, &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS_PUERTA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS_PUERTA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS_PUERTA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS_PUERTA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS_LIBRES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS_LIBRES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS_LIBRES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS_LIBRES, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_CORNERS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_CORNERS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_CORNERS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_CORNERS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_AMARILLAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_AMARILLAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_AMARILLAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_AMARILLAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>LOCAL_ROJAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>LOCAL_ROJAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>VISITANTE_ROJAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>VISITANTE_ROJAS, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>Bb1X2, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>Bb1X2, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>BbMxH, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>BbMxH, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>BbMxD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>BbMxD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>BbAvH, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>BbAvH, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>BbAvD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>BbAvD, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>BbMxA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>BbMxA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>), <span class="fu">paste</span>(<span class="fu">min</span>(base_filtrada<span class="sc">$</span>BbAvA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>),<span class="fu">max</span>(base_filtrada<span class="sc">$</span>BbAvA, <span class="at">na.rm =</span> <span class="cn">TRUE</span>), <span class="at">sep =</span> <span class="st">&quot; a &quot;</span>) )</span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>tabla_variables <span class="ot">&lt;-</span> <span class="fu">data.frame</span> (columnas, Tipo_variables, rango_categorias)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">kable</span>(tabla_variables, <span class="st">&quot;simple&quot;</span>,   <span class="at">col.names =</span> <span class="fu">c</span>(<span class="st">&#39;VARIABLE&#39;</span>, <span class="st">&#39;TIPO DE VARIABLE&#39;</span>, <span class="st">&#39;Rango o Categorías&#39;</span>), <span class="at">align =</span> <span class="st">&quot;ll&quot;</span>, <span class="at">caption =</span> <span class="st">&quot;Tabla. Variables de análisis&quot;</span>)</span></code></pre></div>
+<table>
+<caption>Tabla. Variables de análisis</caption>
+<thead>
+<tr class="header">
+<th align="left">VARIABLE</th>
+<th align="left">TIPO DE VARIABLE</th>
+<th align="left">Rango o Categorías</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">FECHA</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">25-08-2018 a 19-05-2021</td>
+</tr>
+<tr class="even">
+<td align="left">EQUIPO_LOCAL</td>
+<td align="left">Cualitativa Nominal</td>
+<td align="left">AEK, Apollon, Panetolikos, PAOK, Olympiakos, Panionios, Xanthi, Lamia, Asteras Tripolis, Atromitos, Panathinaikos, Aris, Levadeiakos, OFI Crete, Larisa, Giannina, Volos NFC, NA</td>
+</tr>
+<tr class="odd">
+<td align="left">EQUIPO_VISITANTE</td>
+<td align="left">Cualitativa Nominal</td>
+<td align="left">Giannina, Larisa, Atromitos, Asteras Tripolis, Levadeiakos, OFI Crete, Panathinaikos, Aris, AEK, Xanthi, Lamia, PAOK, Apollon, Panionios, Panetolikos, Olympiakos, Volos NFC, NA</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_GOLES</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">-2 a 33</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_GOLES</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">-1 a 32</td>
+</tr>
+<tr class="even">
+<td align="left">RESULTADO_FINAL</td>
+<td align="left">Cualitativa Nominal</td>
+<td align="left">H, A, D, NA</td>
+</tr>
+<tr class="odd">
+<td align="left">LOCAL_GOLES_MITAD</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 4</td>
+</tr>
+<tr class="even">
+<td align="left">VISITANTE_GOLES_MITAD</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 4</td>
+</tr>
+<tr class="odd">
+<td align="left">RESULTADO_MITAD</td>
+<td align="left">Cualitativa Nominal</td>
+<td align="left">H, A, D, NA</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_TIROS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 24</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_TIROS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 22</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_TIROS_PUERTA</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 14</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_TIROS_PUERTA</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 13</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_TIROS_LIBRES</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">4 a 30</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_TIROS_LIBRES</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">8 a 32</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_CORNERS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 15</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_CORNERS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 15</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_AMARILLAS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 7</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_AMARILLAS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 9</td>
+</tr>
+<tr class="even">
+<td align="left">LOCAL_ROJAS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 2</td>
+</tr>
+<tr class="odd">
+<td align="left">VISITANTE_ROJAS</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">0 a 2</td>
+</tr>
+<tr class="even">
+<td align="left">Bb1X2</td>
+<td align="left">Cuantitativa Discreta</td>
+<td align="left">22 a 40</td>
+</tr>
+<tr class="odd">
+<td align="left">BbMxH</td>
+<td align="left">Cuantitativa Contínua</td>
+<td align="left">1.12 a 9.75</td>
+</tr>
+<tr class="even">
+<td align="left">BbAvH</td>
+<td align="left">Cuantitativa Contínua</td>
+<td align="left">10 a 9.5</td>
+</tr>
+<tr class="odd">
+<td align="left">BbMxD</td>
+<td align="left">Cuantitativa Contínua</td>
+<td align="left">1.08 a 9.83</td>
+</tr>
+<tr class="even">
+<td align="left">BbAvD</td>
+<td align="left">Cuantitativa Contínua</td>
+<td align="left">2.62 a 9.58</td>
+</tr>
+<tr class="odd">
+<td align="left">BbMxA</td>
+<td align="left">Cuantitativa Contínua</td>
+<td align="left">1.21 a 9.77</td>
+</tr>
+<tr class="even">
+<td align="left">BbAvA</td>
+<td align="left">Cuantitativa Contínua</td>
+<td align="left">1.18 a 9.95</td>
+</tr>
+</tbody>
+</table>
+<p>Una muestra de los datos se puede observar a continuación:</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(base_filtrada)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<colgroup>
+<col width="2%" />
+<col width="3%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="3%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="4%" />
+<col width="5%" />
+<col width="3%" />
+<col width="4%" />
+<col width="4%" />
+<col width="5%" />
+<col width="3%" />
+<col width="4%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+<col width="1%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">FECHA</th>
+<th align="left">EQUIPO_LOCAL</th>
+<th align="left">EQUIPO_VISITANTE</th>
+<th align="right">LOCAL_GOLES</th>
+<th align="right">VISITANTE_GOLES</th>
+<th align="left">RESULTADO_FINAL</th>
+<th align="right">LOCAL_GOLES_MITAD</th>
+<th align="right">VISITANTE_GOLES_MITAD</th>
+<th align="left">RESULTADO_MITAD</th>
+<th align="right">LOCAL_TIROS</th>
+<th align="right">VISITANTE_TIROS</th>
+<th align="right">LOCAL_TIROS_PUERTA</th>
+<th align="right">VISITANTE_TIROS_PUERTA</th>
+<th align="right">LOCAL_TIROS_LIBRES</th>
+<th align="right">VISITANTE_TIROS_LIBRES</th>
+<th align="right">LOCAL_CORNERS</th>
+<th align="right">VISITANTE_CORNERS</th>
+<th align="right">LOCAL_AMARILLAS</th>
+<th align="right">VISITANTE_AMARILLAS</th>
+<th align="right">LOCAL_ROJAS</th>
+<th align="right">VISITANTE_ROJAS</th>
+<th align="right">Bb1X2</th>
+<th align="left">BbMxH</th>
+<th align="left">BbAvH</th>
+<th align="left">BbMxD</th>
+<th align="left">BbAvD</th>
+<th align="left">BbMxA</th>
+<th align="left">BbAvA</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2018-08-25</td>
+<td align="left">AEK</td>
+<td align="left">Giannina</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="left">H</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="left">H</td>
+<td align="right">17</td>
+<td align="right">8</td>
+<td align="right">11</td>
+<td align="right">2</td>
+<td align="right">18</td>
+<td align="right">22</td>
+<td align="right">2</td>
+<td align="right">3</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="left">1.4</td>
+<td align="left">1.34</td>
+<td align="left">4.8</td>
+<td align="left">4.36</td>
+<td align="left">12.51</td>
+<td align="left">9.62</td>
+</tr>
+<tr class="even">
+<td align="left">2018-08-25</td>
+<td align="left">Apollon</td>
+<td align="left">Larisa</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">A</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="left">A</td>
+<td align="right">7</td>
+<td align="right">5</td>
+<td align="right">0</td>
+<td align="right">3</td>
+<td align="right">16</td>
+<td align="right">20</td>
+<td align="right">5</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">27</td>
+<td align="left">2.33</td>
+<td align="left">2.24</td>
+<td align="left">3.1</td>
+<td align="left">2.95</td>
+<td align="left">3.61</td>
+<td align="left">3.33</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-08-25</td>
+<td align="left">Panetolikos</td>
+<td align="left">Atromitos</td>
+<td align="right">1</td>
+<td align="right">2</td>
+<td align="left">A</td>
+<td align="right">1</td>
+<td align="right">1</td>
+<td align="left">D</td>
+<td align="right">6</td>
+<td align="right">14</td>
+<td align="right">4</td>
+<td align="right">7</td>
+<td align="right">13</td>
+<td align="right">22</td>
+<td align="right">4</td>
+<td align="right">4</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="left">3.06</td>
+<td align="left">2.86</td>
+<td align="left">3.11</td>
+<td align="left">2.89</td>
+<td align="left">2.78</td>
+<td align="left">2.57</td>
+</tr>
+<tr class="even">
+<td align="left">2018-08-25</td>
+<td align="left">PAOK</td>
+<td align="left">Asteras Tripolis</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="left">H</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">D</td>
+<td align="right">12</td>
+<td align="right">10</td>
+<td align="right">4</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">19</td>
+<td align="right">4</td>
+<td align="right">6</td>
+<td align="right">2</td>
+<td align="right">4</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">32</td>
+<td align="left">1.25</td>
+<td align="left">1.19</td>
+<td align="left">7</td>
+<td align="left">5.86</td>
+<td align="left">18</td>
+<td align="left">14.02</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-08-26</td>
+<td align="left">Olympiakos</td>
+<td align="left">Levadeiakos</td>
+<td align="right">1</td>
+<td align="right">0</td>
+<td align="left">H</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="left">D</td>
+<td align="right">21</td>
+<td align="right">4</td>
+<td align="right">9</td>
+<td align="right">2</td>
+<td align="right">14</td>
+<td align="right">26</td>
+<td align="right">8</td>
+<td align="right">0</td>
+<td align="right">1</td>
+<td align="right">7</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">30</td>
+<td align="left">1.18</td>
+<td align="left">1.12</td>
+<td align="left">8.34</td>
+<td align="left">7.08</td>
+<td align="left">30.44</td>
+<td align="left">19.59</td>
+</tr>
+<tr class="even">
+<td align="left">2018-08-26</td>
+<td align="left">Panionios</td>
+<td align="left">OFI Crete</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="left">D</td>
+<td align="right">2</td>
+<td align="right">2</td>
+<td align="left">D</td>
+<td align="right">15</td>
+<td align="right">9</td>
+<td align="right">9</td>
+<td align="right">6</td>
+<td align="right">22</td>
+<td align="right">16</td>
+<td align="right">9</td>
+<td align="right">3</td>
+<td align="right">4</td>
+<td align="right">2</td>
+<td align="right">0</td>
+<td align="right">0</td>
+<td align="right">29</td>
+<td align="left">2.05</td>
+<td align="left">1.98</td>
+<td align="left">3.3</td>
+<td align="left">3.13</td>
+<td align="left">4.2</td>
+<td align="left">3.88</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 </div>
 <div id="detección-de-anomalías" class="section level1">
 <h1>Detección de anomalías</h1>
 <div id="formato-de-las-variables-no-coincide-con-su-tipo-de-variable" class="section level3">
 <h3>1. Formato de las variables no coincide con su tipo de variable</h3>
-<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span> HomeTeam <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>HomeTeam)</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>AwayTeam <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>AwayTeam)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>FTR <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>FTR)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>HTR <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>HTR)</span></code></pre></div>
+<p>Equipo Fecha</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>FECHA <span class="ot">=</span> <span class="fu">as.Date</span>(base_filtrada<span class="sc">$</span>FECHA,<span class="at">format=</span> <span class="st">&quot;%Y-%m-%d&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>FECHA)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Categoría</th>
+<th align="right">Freq. Abs.</th>
+<th align="right">Freq. Rel.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">2018-08-25</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-08-26</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-08-27</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-01</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-09-02</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-03</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-09-15</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-16</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-09-17</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-22</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-09-23</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-24</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-09-29</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2018-09-30</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-01</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2018-10-06</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-07</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-10-08</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-20</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-10-21</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-22</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2018-10-27</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-10-28</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2018-10-29</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-11-03</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-11-04</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-11-05</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2018-11-10</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-11-11</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-11-12</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-11-24</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-11-25</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-11-26</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2018-12-01</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-12-02</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2018-12-03</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-12-08</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2018-12-09</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-12-10</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2018-12-15</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2018-12-16</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2018-12-17</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-01-12</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-01-13</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-01-14</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-01-19</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-01-20</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2019-01-21</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-01-26</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-01-27</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-01-30</td>
+<td align="right">6</td>
+<td align="right">0.0081855</td>
+</tr>
+<tr class="even">
+<td align="left">2019-01-31</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-02-02</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-02-03</td>
+<td align="right">6</td>
+<td align="right">0.0081855</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-02-09</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-02-10</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-02-11</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-02-16</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-02-17</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2019-02-18</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-02-23</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-02-24</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-02-25</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-03-02</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-03-03</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2019-03-04</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-03-09</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-03-10</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-03-11</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2019-03-16</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-03-17</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2019-03-18</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-03-30</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-03-31</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-04-01</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2019-04-06</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-04-07</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2019-04-08</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-04-14</td>
+<td align="right">8</td>
+<td align="right">0.0109141</td>
+</tr>
+<tr class="even">
+<td align="left">2019-04-21</td>
+<td align="right">8</td>
+<td align="right">0.0109141</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-05-04</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2019-05-05</td>
+<td align="right">7</td>
+<td align="right">0.0095498</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-08-24</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-08-25</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-08-31</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-09-01</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-09-14</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-09-15</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-09-21</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-09-22</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-09-28</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-09-29</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-10-05</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-10-06</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-10-07</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2019-10-19</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-10-20</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2019-10-26</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-10-27</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2019-10-28</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-11-02</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-11-03</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-11-04</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2019-11-09</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-11-10</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2019-11-11</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-11-23</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-11-24</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-11-30</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-12-01</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-12-07</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-12-08</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-12-14</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2019-12-15</td>
+<td align="right">7</td>
+<td align="right">0.0095498</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-12-18</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2019-12-19</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-12-21</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2019-12-22</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2019-12-23</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-01-04</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-01-05</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-01-11</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-01-12</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-01-18</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-01-19</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2020-01-22</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-01-23</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-01-25</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-01-26</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-01-27</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-02-01</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-02-02</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-02-08</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-02-09</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-02-10</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-02-15</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-02-16</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-02-17</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-02-22</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-02-23</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-03-01</td>
+<td align="right">7</td>
+<td align="right">0.0095498</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-06</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-06-07</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-08</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-06-13</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-14</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-06-15</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-20</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-06-21</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-22</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-06-24</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-27</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-06-28</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-06-29</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-07-01</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-07-04</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-07-05</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-07-06</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-07-08</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-07-11</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-07-12</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-07-15</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-07-18</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-07-19</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-09-11</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-09-12</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-09-13</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-09-18</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-09-19</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-09-20</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-09-26</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-09-27</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-09-28</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-03</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-04</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-05</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-17</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-18</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-19</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-21</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-24</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-25</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-10-26</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-10-31</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-11-01</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-11-03</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-11-04</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-11-07</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-11-08</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-11-21</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-11-22</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2020-11-23</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-11-25</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-11-28</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-11-29</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-11-30</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-12-02</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-12-05</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-12-06</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-12-07</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-12-09</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-12-12</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-12-13</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2020-12-14</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-12-16</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2020-12-19</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2020-12-20</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2020-12-21</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-03</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-04</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-06</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-07</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-09</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-10</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-11</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-13</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-14</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-16</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-17</td>
+<td align="right">5</td>
+<td align="right">0.0068213</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-23</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-24</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-26</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-27</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-28</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-01-30</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-01-31</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-06</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-07</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-08</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-13</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-14</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-15</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-18</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-20</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-21</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-22</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-24</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-02-27</td>
+<td align="right">2</td>
+<td align="right">0.0027285</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-02-28</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="even">
+<td align="left">2021-03-01</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-03-06</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-03-07</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-03-08</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-03-10</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-03-14</td>
+<td align="right">7</td>
+<td align="right">0.0095498</td>
+</tr>
+<tr class="even">
+<td align="left">2021-03-20</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-03-21</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-04-03</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-04-04</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-04-10</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-04-11</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-04-12</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-04-17</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-04-18</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-04-19</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-04-21</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-04-24</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-04-25</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-04-26</td>
+<td align="right">1</td>
+<td align="right">0.0013643</td>
+</tr>
+<tr class="even">
+<td align="left">2021-05-05</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-05-08</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-05-09</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-05-12</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="even">
+<td align="left">2021-05-15</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">2021-05-16</td>
+<td align="right">12</td>
+<td align="right">0.0163711</td>
+</tr>
+<tr class="even">
+<td align="left">2021-05-19</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">733</td>
+<td align="right">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Equipo Local</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>EQUIPO_LOCAL <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>EQUIPO_LOCAL)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>EQUIPO_LOCAL)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Categoría</th>
+<th align="right">Freq. Abs.</th>
+<th align="right">Freq. Rel.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">AEK</td>
+<td align="right">53</td>
+<td align="right">0.0723056</td>
+</tr>
+<tr class="even">
+<td align="left">Apollon</td>
+<td align="right">32</td>
+<td align="right">0.0436562</td>
+</tr>
+<tr class="odd">
+<td align="left">Aris</td>
+<td align="right">51</td>
+<td align="right">0.0695771</td>
+</tr>
+<tr class="even">
+<td align="left">Asteras Tripolis</td>
+<td align="right">50</td>
+<td align="right">0.0682128</td>
+</tr>
+<tr class="odd">
+<td align="left">Atromitos</td>
+<td align="right">49</td>
+<td align="right">0.0668486</td>
+</tr>
+<tr class="even">
+<td align="left">Giannina</td>
+<td align="right">34</td>
+<td align="right">0.0463847</td>
+</tr>
+<tr class="odd">
+<td align="left">Lamia</td>
+<td align="right">48</td>
+<td align="right">0.0654843</td>
+</tr>
+<tr class="even">
+<td align="left">Larisa</td>
+<td align="right">50</td>
+<td align="right">0.0682128</td>
+</tr>
+<tr class="odd">
+<td align="left">Levadeiakos</td>
+<td align="right">15</td>
+<td align="right">0.0204638</td>
+</tr>
+<tr class="even">
+<td align="left">OFI Crete</td>
+<td align="right">49</td>
+<td align="right">0.0668486</td>
+</tr>
+<tr class="odd">
+<td align="left">Olympiakos</td>
+<td align="right">51</td>
+<td align="right">0.0695771</td>
+</tr>
+<tr class="even">
+<td align="left">Panathinaikos</td>
+<td align="right">53</td>
+<td align="right">0.0723056</td>
+</tr>
+<tr class="odd">
+<td align="left">Panetolikos</td>
+<td align="right">47</td>
+<td align="right">0.0641201</td>
+</tr>
+<tr class="even">
+<td align="left">Panionios</td>
+<td align="right">31</td>
+<td align="right">0.0422920</td>
+</tr>
+<tr class="odd">
+<td align="left">PAOK</td>
+<td align="right">53</td>
+<td align="right">0.0723056</td>
+</tr>
+<tr class="even">
+<td align="left">Volos NFC</td>
+<td align="right">33</td>
+<td align="right">0.0450205</td>
+</tr>
+<tr class="odd">
+<td align="left">Xanthi</td>
+<td align="right">31</td>
+<td align="right">0.0422920</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">733</td>
+<td align="right">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Equipo visitante</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>EQUIPO_VISITANTE <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>EQUIPO_VISITANTE)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>EQUIPO_VISITANTE)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Categoría</th>
+<th align="right">Freq. Abs.</th>
+<th align="right">Freq. Rel.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">AEK</td>
+<td align="right">51</td>
+<td align="right">0.0695771</td>
+</tr>
+<tr class="even">
+<td align="left">Apollon</td>
+<td align="right">33</td>
+<td align="right">0.0450205</td>
+</tr>
+<tr class="odd">
+<td align="left">Aris</td>
+<td align="right">53</td>
+<td align="right">0.0723056</td>
+</tr>
+<tr class="even">
+<td align="left">Asteras Tripolis</td>
+<td align="right">51</td>
+<td align="right">0.0695771</td>
+</tr>
+<tr class="odd">
+<td align="left">Atromitos</td>
+<td align="right">47</td>
+<td align="right">0.0641201</td>
+</tr>
+<tr class="even">
+<td align="left">Giannina</td>
+<td align="right">33</td>
+<td align="right">0.0450205</td>
+</tr>
+<tr class="odd">
+<td align="left">Lamia</td>
+<td align="right">48</td>
+<td align="right">0.0654843</td>
+</tr>
+<tr class="even">
+<td align="left">Larisa</td>
+<td align="right">48</td>
+<td align="right">0.0654843</td>
+</tr>
+<tr class="odd">
+<td align="left">Levadeiakos</td>
+<td align="right">15</td>
+<td align="right">0.0204638</td>
+</tr>
+<tr class="even">
+<td align="left">OFI Crete</td>
+<td align="right">50</td>
+<td align="right">0.0682128</td>
+</tr>
+<tr class="odd">
+<td align="left">Olympiakos</td>
+<td align="right">53</td>
+<td align="right">0.0723056</td>
+</tr>
+<tr class="even">
+<td align="left">Panathinaikos</td>
+<td align="right">51</td>
+<td align="right">0.0695771</td>
+</tr>
+<tr class="odd">
+<td align="left">Panetolikos</td>
+<td align="right">49</td>
+<td align="right">0.0668486</td>
+</tr>
+<tr class="even">
+<td align="left">Panionios</td>
+<td align="right">32</td>
+<td align="right">0.0436562</td>
+</tr>
+<tr class="odd">
+<td align="left">PAOK</td>
+<td align="right">51</td>
+<td align="right">0.0695771</td>
+</tr>
+<tr class="even">
+<td align="left">Volos NFC</td>
+<td align="right">33</td>
+<td align="right">0.0450205</td>
+</tr>
+<tr class="odd">
+<td align="left">Xanthi</td>
+<td align="right">32</td>
+<td align="right">0.0436562</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">3</td>
+<td align="right">0.0040928</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">733</td>
+<td align="right">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Resultado al finalizar el partido</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>RESULTADO_FINAL <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>RESULTADO_FINAL)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>RESULTADO_FINAL)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Categoría</th>
+<th align="right">Freq. Abs.</th>
+<th align="right">Freq. Rel.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">216</td>
+<td align="right">0.2946794</td>
+</tr>
+<tr class="even">
+<td align="left">D</td>
+<td align="right">197</td>
+<td align="right">0.2687585</td>
+</tr>
+<tr class="odd">
+<td align="left">H</td>
+<td align="right">316</td>
+<td align="right">0.4311050</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">733</td>
+<td align="right">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Resultado al finalizar en el primer tiempo</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>RESULTADO_MITAD <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>RESULTADO_MITAD)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>RESULTADO_MITAD)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Categoría</th>
+<th align="right">Freq. Abs.</th>
+<th align="right">Freq. Rel.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">183</td>
+<td align="right">0.2496589</td>
+</tr>
+<tr class="even">
+<td align="left">D</td>
+<td align="right">332</td>
+<td align="right">0.4529332</td>
+</tr>
+<tr class="odd">
+<td align="left">H</td>
+<td align="right">214</td>
+<td align="right">0.2919509</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">733</td>
+<td align="right">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Casteada de variables cuantitativa discreta(integer) y continua (numeric)</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_GOLES           <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_GOLES       <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_GOLES_MITAD     <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES_MITAD)</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_GOLES_MITAD <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES_MITAD)</span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_TIROS           <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS)</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_TIROS       <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS)</span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_TIROS_PUERTA    <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS_PUERTA)</span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_TIROS_PUERTA<span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS_PUERTA)</span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_TIROS_LIBRES    <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_TIROS_LIBRES)</span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_TIROS_LIBRES<span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_TIROS_LIBRES)</span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_CORNERS         <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_CORNERS)</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_CORNER      <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_CORNERS)</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_AMARILLAS       <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_AMARILLAS)</span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_AMARILLAS   <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_AMARILLAS)</span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>LOCAL_ROJAS           <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>LOCAL_ROJAS)</span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>VISITANTE_ROJAS       <span class="ot">=</span> <span class="fu">as.integer</span>(base_filtrada<span class="sc">$</span>VISITANTE_ROJAS)</span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>base_filtrada<span class="sc">$</span>BbMxH   <span class="ot">=</span> <span class="fu">as.numeric</span>(base_filtrada<span class="sc">$</span>BbMxH)   </span></code></pre></div>
+<pre><code>## Warning: Unknown or uninitialised column: `base_filtrada`.</code></pre>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>BbAvH <span class="ot">=</span> <span class="fu">as.numeric</span>(base_filtrada<span class="sc">$</span>BbAvH)   </span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>BbMxD <span class="ot">=</span> <span class="fu">as.numeric</span>(base_filtrada<span class="sc">$</span>BbMxD)   </span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>BbAvD <span class="ot">=</span> <span class="fu">as.numeric</span>(base_filtrada<span class="sc">$</span>BbAvD)   </span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>BbMxA <span class="ot">=</span> <span class="fu">as.numeric</span>(base_filtrada<span class="sc">$</span>BbMxA)   </span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>BbAvA <span class="ot">=</span> <span class="fu">as.numeric</span>(base_filtrada<span class="sc">$</span>BbAvA)</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>base_filtrada<span class="sc">$</span>RESULTADO_MITAD <span class="ot">=</span> <span class="fu">factor</span>(base_filtrada<span class="sc">$</span>RESULTADO_MITAD)</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>RESULTADO_MITAD)</span></code></pre></div>
+<div class="kable-table">
+<table>
+<thead>
+<tr class="header">
+<th align="left">Categoría</th>
+<th align="right">Freq. Abs.</th>
+<th align="right">Freq. Rel.</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">A</td>
+<td align="right">183</td>
+<td align="right">0.2496589</td>
+</tr>
+<tr class="even">
+<td align="left">D</td>
+<td align="right">332</td>
+<td align="right">0.4529332</td>
+</tr>
+<tr class="odd">
+<td align="left">H</td>
+<td align="right">214</td>
+<td align="right">0.2919509</td>
+</tr>
+<tr class="even">
+<td align="left">NA</td>
+<td align="right">4</td>
+<td align="right">0.0054570</td>
+</tr>
+<tr class="odd">
+<td align="left">Total</td>
+<td align="right">733</td>
+<td align="right">1.0000000</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(base_filtrada)</span></code></pre></div>
+<pre><code>## tibble [733 x 30] (S3: tbl_df/tbl/data.frame)
+##  $ FECHA                 : Date[1:733], format: &quot;2018-08-25&quot; &quot;2018-08-25&quot; ...
+##  $ EQUIPO_LOCAL          : Factor w/ 17 levels &quot;AEK&quot;,&quot;Apollon&quot;,..: 1 2 13 15 11 14 17 7 4 5 ...
+##  $ EQUIPO_VISITANTE      : Factor w/ 17 levels &quot;AEK&quot;,&quot;Apollon&quot;,..: 6 8 5 4 9 10 12 3 1 17 ...
+##  $ LOCAL_GOLES           : int [1:733] 2 0 1 1 1 2 0 0 0 0 ...
+##  $ VISITANTE_GOLES       : int [1:733] 0 1 2 0 0 2 1 3 1 0 ...
+##  $ RESULTADO_FINAL       : Factor w/ 3 levels &quot;A&quot;,&quot;D&quot;,&quot;H&quot;: 3 1 1 3 3 2 1 1 1 2 ...
+##  $ LOCAL_GOLES_MITAD     : int [1:733] 1 0 1 0 0 2 0 0 0 0 ...
+##  $ VISITANTE_GOLES_MITAD : int [1:733] 0 1 1 0 0 2 0 0 1 0 ...
+##  $ RESULTADO_MITAD       : Factor w/ 3 levels &quot;A&quot;,&quot;D&quot;,&quot;H&quot;: 3 1 2 2 2 2 2 2 1 2 ...
+##  $ LOCAL_TIROS           : int [1:733] 17 7 6 12 21 15 7 11 4 6 ...
+##  $ VISITANTE_TIROS       : int [1:733] 8 5 14 10 4 9 9 11 6 6 ...
+##  $ LOCAL_TIROS_PUERTA    : int [1:733] 11 0 4 4 9 9 1 6 1 1 ...
+##  $ VISITANTE_TIROS_PUERTA: int [1:733] 2 3 7 4 2 6 4 5 3 2 ...
+##  $ LOCAL_TIROS_LIBRES    : int [1:733] 18 16 13 9 14 22 23 15 18 13 ...
+##  $ VISITANTE_TIROS_LIBRES: int [1:733] 22 20 22 19 26 16 16 21 22 22 ...
+##  $ LOCAL_CORNERS         : int [1:733] 2 5 4 4 8 9 1 5 1 5 ...
+##  $ VISITANTE_CORNERS     : num [1:733] 3 2 4 6 0 3 2 4 7 3 ...
+##  $ LOCAL_AMARILLAS       : int [1:733] 2 2 3 2 1 4 2 3 2 2 ...
+##  $ VISITANTE_AMARILLAS   : int [1:733] 4 4 4 4 7 2 4 2 4 4 ...
+##  $ LOCAL_ROJAS           : int [1:733] 0 0 0 0 0 0 1 0 0 0 ...
+##  $ VISITANTE_ROJAS       : int [1:733] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ Bb1X2                 : num [1:733] 32 27 32 32 30 29 30 23 36 35 ...
+##  $ BbMxH                 : chr [1:733] &quot;1.4&quot; &quot;2.33&quot; &quot;3.06&quot; &quot;1.25&quot; ...
+##  $ BbAvH                 : num [1:733] 1.34 2.24 2.86 1.19 1.12 1.98 1.91 2.43 3.87 1.71 ...
+##  $ BbMxD                 : num [1:733] 4.8 3.1 3.11 7 8.34 3.3 3.3 3 3.28 3.5 ...
+##  $ BbAvD                 : num [1:733] 4.36 2.95 2.89 5.86 7.08 3.13 3.08 2.85 3.11 3.28 ...
+##  $ BbMxA                 : num [1:733] 12.51 3.61 2.78 18 30.44 ...
+##  $ BbAvA                 : num [1:733] 9.62 3.33 2.57 14.02 19.59 ...
+##  $ VISITANTE_CORNER      : int [1:733] 3 2 4 6 0 3 2 4 7 3 ...
+##  $ base_filtrada         :List of 733
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   ..$ BbMxH: num [1:733] 1.4 2.33 3.06 1.25 1.18 2.05 2.01 2.54 4.33 1.77 ...
+##   .. [list output truncated]</code></pre>
 </div>
 <div id="valores-de-variables-no-validas" class="section level3">
 <h3>2. Valores de variables no validas</h3>
-<p>Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido). Aunque 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana.</p>
-<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>FTHG)</span></code></pre></div>
+<p>Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido). Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana.</p>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>LOCAL_GOLES)</span></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
@@ -970,8 +3238,10 @@
 </tbody>
 </table>
 </div>
+<p>Se procede a identificar los registros invalidos y atipicos para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web</p>
+<div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="do">##base_filtrada[base_filtrada$LOCAL_GOLES&gt;]</span></span></code></pre></div>
 <p>Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del visitante al terminar el partido).</p>
-<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>FTAG)</span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">tabla_freq</span>(base_filtrada<span class="sc">$</span>VISITANTE_GOLES)</span></code></pre></div>
 <div class="kable-table">
 <table>
 <thead>
