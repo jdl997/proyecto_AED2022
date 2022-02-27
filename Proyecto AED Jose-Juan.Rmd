@@ -332,6 +332,8 @@ Se encuentran 12 registros duplicados los cuales se muestran a continuación. Se
 base_filtrada[duplicated(base_filtrada),]
 base_filtrada= base_filtrada[!duplicated(base_filtrada), ]
 ```
+### 3. Campos vacíos
+summary(base_filtrada)
 
 
 ### 4. Datos atípicos
