@@ -258,10 +258,11 @@ head(base_filtrada)
 
 ### 1. Formato de las variables no coincide con su tipo de variable
 
-Equipo Fecha
+Equipo Fecha:
+Se castea el campo a tipo Date para mejor tratamiento de la variable.
 ```{r}
 base_filtrada$FECHA = as.Date(base_filtrada$FECHA,format= "%Y-%m-%d")
-tabla_freq(base_filtrada$FECHA)
+class(base_filtrada$FECHA)
 
 ```
 
@@ -308,7 +309,7 @@ base_filtrada$LOCAL_AMARILLAS       = as.integer(base_filtrada$LOCAL_AMARILLAS)
 base_filtrada$VISITANTE_AMARILLAS   = as.integer(base_filtrada$VISITANTE_AMARILLAS)
 base_filtrada$LOCAL_ROJAS           = as.integer(base_filtrada$LOCAL_ROJAS)
 base_filtrada$VISITANTE_ROJAS       = as.integer(base_filtrada$VISITANTE_ROJAS)
-base_filtrada$base_filtrada$BbMxH   = as.numeric(base_filtrada$BbMxH)	
+base_filtrada$BbMxH   = as.numeric(base_filtrada$BbMxH)	
 base_filtrada$BbAvH = as.numeric(base_filtrada$BbAvH)	
 base_filtrada$BbMxD = as.numeric(base_filtrada$BbMxD)	
 base_filtrada$BbAvD = as.numeric(base_filtrada$BbAvD)	
@@ -327,11 +328,16 @@ Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en
 ```{r}
 tabla_freq(base_filtrada$LOCAL_GOLES)
 ```
-Se procede a identificar los registros invalidos y atipicos para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web 
+Se procede a identificar los registros invalidos y atipicos en las variables "LOCAL_GOLES" y "VISITANTE_GOLES" para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web: [Resultados](https://el.soccerway.com/matches/2020/06/20/greece/super-league/aek-athens-fc/aris-thessaloniki-fc/3272496/)
 ```{r}
-##base_filtrada[base_filtrada$LOCAL_GOLES>]
+base_filtrada[(base_filtrada$LOCAL_GOLES<0 | base_filtrada$LOCAL_GOLES> 8) & !is.na(base_filtrada$LOCAL_GOLES),]
 ```
-Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del visitante al terminar el partido).
 ```{r}
-tabla_freq(base_filtrada$VISITANTE_GOLES)
+base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== 22]= 2
+base_filtrada$VISITANTE_GOLES[base_filtrada$VISITANTE_GOLES== 32]= 2
+base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== -2]= 2
+base_filtrada$VISITANTE_GOLES[base_filtrada$VISITANTE_GOLES== -1]= 1
+base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== 33]= 3
+
+base_filtrada[(base_filtrada$FECHA == as.Date("2020-06-20") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-01-17") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-03-21") & base_filtrada$EQUIPO_LOCAL == "PAOK"),]
 ```
