@@ -244,6 +244,11 @@ A partir de la investigación respecto al comportamiento de la liga y del objeti
 ##knitr::kable(tabla_variables, "simple")
 
 ```
+```{r}
+## Head bonito
+
+head(base_filtrada)
+```
 
 # Detección de anomalías
 
