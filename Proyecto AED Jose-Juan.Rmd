@@ -300,12 +300,12 @@ En esta etapa del proceso nos ocupamos de compartir los hallazgos en materia de 
 6.Valores inválidos o sin referencia en el diccionario de variables
 7.Valores inconsistentes
 
-## 1. Formato de las variables no coincide con su tipo de variable {.tabset .tabset-fade .tabset-pills}
+## Formato de las variables no coincide con su tipo de variable 
 
-### Fecha:
+### Fecha
 
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$FECHA)`*. 
-```{r Tratamiento fecha, echo=FALSE}
+```{r Tratamiento fecha, include=FALSE}
 base_filtrada$FECHA = as.Date(base_filtrada$FECHA,format= "%Y-%m-%d")
 class(base_filtrada$FECHA)
 ```
@@ -316,34 +316,32 @@ Identificamos que esta variable es leida del origen cómo tipo *`r class(base_fi
 ```{r}
 base_filtrada$EQUIPO_LOCAL = factor(base_filtrada$EQUIPO_LOCAL)
 ```
-A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*, cuyas categorías son:
-```{r}
-tabla_freq(base_filtrada$EQUIPO_LOCAL)
-```
+A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_LOCAL)))`*]
 
 ### Equipo visitante
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*.
 ```{r}
 base_filtrada$EQUIPO_VISITANTE = factor(base_filtrada$EQUIPO_VISITANTE)
 ```
-A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*, cuyas categorías son:
-```{r}
-tabla_freq(base_filtrada$EQUIPO_VISITANTE)
-```
+A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_VISITANTE)))`*]
 
-Resultado al finalizar el partido
+### Resultado final del partido
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$RESULTADO_FINAL)`*.
 ```{r}
 base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL)
-tabla_freq(base_filtrada$RESULTADO_FINAL)
 ```
+A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$RESULTADO_FINAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$RESULTADO_FINAL)))`*]
 
-Resultado al finalizar en el primer tiempo
+### Resultado al finalizar el primer tiempo
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$RESULTADO_MITAD)`*.
 ```{r}
 base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
-tabla_freq(base_filtrada$RESULTADO_MITAD)
-
 ```
-Casteada de variables cuantitativa discreta(integer) y continua (numeric)
+A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$RESULTADO_MITAD)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$RESULTADO_MITAD)))`*]
+
+### Tipo de dato en las variables cuantitativas discretas 
+Efectuamos la corrección de las variables cuantitativas discretas pasándolas a tipo *integer* : [*`r gsub(",", ", ", collapse(tabla_variables$columnas[tabla_variables$Tipo_variables=="Cuantitativa Discreta" & tabla_variables$columnas!="FECHA"]))`*].
+
 ```{r}
 base_filtrada$LOCAL_GOLES           = as.integer(base_filtrada$LOCAL_GOLES)
 base_filtrada$VISITANTE_GOLES       = as.integer(base_filtrada$VISITANTE_GOLES)
@@ -361,33 +359,39 @@ base_filtrada$LOCAL_AMARILLAS       = as.integer(base_filtrada$LOCAL_AMARILLAS)
 base_filtrada$VISITANTE_AMARILLAS   = as.integer(base_filtrada$VISITANTE_AMARILLAS)
 base_filtrada$LOCAL_ROJAS           = as.integer(base_filtrada$LOCAL_ROJAS)
 base_filtrada$VISITANTE_ROJAS       = as.integer(base_filtrada$VISITANTE_ROJAS)
-base_filtrada$BbMxH   = as.numeric(base_filtrada$BbMxH)	
+base_filtrada$Bb1X2                 = as.integer(base_filtrada$Bb1X2)
+```
+
+### Tipo de dato en las variables cuantitativas continuas
+Efectuamos la corrección de las variables cuantitativas discretas pasándolas a tipo *numeric* : [*`r gsub(",", ", ", collapse(tabla_variables$columnas[tabla_variables$Tipo_variables=="Cuantitativa Contínua"]))`*].
+
+```{r}
+base_filtrada$BbMxH = as.numeric(base_filtrada$BbMxH)	
 base_filtrada$BbAvH = as.numeric(base_filtrada$BbAvH)	
 base_filtrada$BbMxD = as.numeric(base_filtrada$BbMxD)	
 base_filtrada$BbAvD = as.numeric(base_filtrada$BbAvD)	
 base_filtrada$BbMxA = as.numeric(base_filtrada$BbMxA)	
 base_filtrada$BbAvA = as.numeric(base_filtrada$BbAvA)
-
-base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
-tabla_freq(base_filtrada$RESULTADO_MITAD)
-str(base_filtrada)
 ```
 
-### 2. Observaciones duplicadas:
-
-```{r}
-tabla_freq(duplicated(base_filtrada))
-```
-
-Se encuentran 12 registros duplicados los cuales se muestran a continuación. Se proceden a eliminarlos.
+## Observaciones duplicadas
+Realizamos la validación de registros duplicados detectando `r nrow(base_filtrada[duplicated(base_filtrada), ])` de los `r nrow(base_filtrada)` registros de la base de datos:
 ```{r}
 base_filtrada[duplicated(base_filtrada),]
-base_filtrada= base_filtrada[!duplicated(base_filtrada), ]
+base_filtrada = base_filtrada[!duplicated(base_filtrada), ]
 ```
-### 3. Campos vacíos
+En vista de que estos registros idénticos producirían sesgos en el momento de contabilizar estos partidos, determinamos eliminarlos, con lo cual la base de datos sea actualiza a `r nrow(base_filtrada)` registros.
+
+## Campos vacíos
+
+```{r}
+inspect_na(base_filtrada)
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7), file=tempfile())
+```
 
 Tenemos 9 variables que tienen 481 NA's los cuales representan un 66% del dataset. Entraremos analizarlas
 ```{r}
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7), file=tempfile())
 summary(base_filtrada)
 ```
 Nos damos cuenta que las siguientes 9 variables nulas se encuentran concentradas en 478 registros por lo que se deciden a borrar las siguientes columnas:
@@ -528,9 +532,7 @@ base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & bas
 base_filtrada[base_filtrada$FECHA == as.Date("2018-09-16") | (base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete") | (base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris") | (base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios") | (base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") |(base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") ,]
 ```
 
-
-
-### 4. Datos atípicos
+## 4. Datos atípicos
 
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
 Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana. 
