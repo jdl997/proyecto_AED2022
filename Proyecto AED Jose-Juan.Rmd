@@ -41,6 +41,8 @@ library(mice)
 library(BBmisc)
 library(dplyr)
 library(janitor)
+library(stringr)
+
 
 
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
@@ -275,9 +277,7 @@ knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de var
 ```
 </font>
 
-Sobre esta  base de datos unificada las variables fueron renombradas respecto al origen a fin de manejar nombres más representativos que faciliten las subsiguientes etapas del proceso y la comunicación de los resultados.
 Una muestra de los datos se puede observar a continuación:
-
 <font size=1>
 ```{r echo=FALSE}
 
@@ -287,10 +287,16 @@ head(base_filtrada)
 </font>
 _Tabla. Muestra premilinar de los datos_
 
+<<<<<<< HEAD
 # Detección de anomalías {.tabset .tabset-fade .tabset-pills}
+=======
 
-En esta etapa del proceso nos ocupamos de compartir los hallazgos en materia de anomalías sobre los datos, usando las siguientes técnicas para su detección y evidenciando las razones que nos condujeron a tomar decisiones al respecto de su solución.
+# Detección de anomalías
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 
+### 1. Formato de las variables no coincide con su tipo de variable
+
+<<<<<<< HEAD
 1.Formato de las variables no coincide con su tipo de variable
 2.Observaciones duplicadas
 3.Campos vacíos
@@ -305,36 +311,61 @@ En esta etapa del proceso nos ocupamos de compartir los hallazgos en materia de 
 
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$FECHA)`*. 
 ```{r Tratamiento fecha, include=FALSE}
+=======
+Equipo Fecha:
+Se castea el campo a tipo Date para mejor tratamiento de la variable.
+```{r}
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 base_filtrada$FECHA = as.Date(base_filtrada$FECHA,format= "%Y-%m-%d")
 class(base_filtrada$FECHA)
-```
-A fin de facilitar el tratamiento con esta variable, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$FECHA)`*
 
-### Equipo Local
-Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*.
+```
+
+Equipo Local
 ```{r}
 base_filtrada$EQUIPO_LOCAL = factor(base_filtrada$EQUIPO_LOCAL)
+<<<<<<< HEAD
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_LOCAL)))`*]
+=======
+tabla_freq(base_filtrada$EQUIPO_LOCAL)
 
-### Equipo visitante
-Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*.
+```
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
+
+Equipo visitante
 ```{r}
 base_filtrada$EQUIPO_VISITANTE = factor(base_filtrada$EQUIPO_VISITANTE)
+<<<<<<< HEAD
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_VISITANTE)))`*]
+=======
+tabla_freq(base_filtrada$EQUIPO_VISITANTE)
+```
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 
 ### Resultado final del partido
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$RESULTADO_FINAL)`*.
 ```{r}
+<<<<<<< HEAD
 base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL)
+=======
+base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL, labels= c("Visitante","Empate","Local"))
+tabla_freq(base_filtrada$RESULTADO_FINAL)
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$RESULTADO_FINAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$RESULTADO_FINAL)))`*]
 
 ### Resultado al finalizar el primer tiempo
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$RESULTADO_MITAD)`*.
 ```{r}
+<<<<<<< HEAD
 base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
+=======
+base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD, labels= c("Visitante","Empate","Local"))
+tabla_freq(base_filtrada$RESULTADO_MITAD)
+
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$RESULTADO_MITAD)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$RESULTADO_MITAD)))`*]
 
@@ -573,11 +604,16 @@ knitr::kable(tabla_variables, "simple",   col.names = c('Equipos Locales', 'Equi
 
 La unica anomalia de valores invalidos fue corregida en el punto #4 donde se encontraron valores de goles negativos lo cual no tiene sentido en el contexto.
 
+<<<<<<< HEAD
 ### 7.Valores inconsistentes:
 
 ```{r}
 base_filtrada[]
 ```
+=======
+
+
+>>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 
 # Creación de Variables
 
