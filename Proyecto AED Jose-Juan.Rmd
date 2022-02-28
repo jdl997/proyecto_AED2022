@@ -277,7 +277,9 @@ knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de var
 ```
 </font>
 
+Sobre esta  base de datos unificada las variables fueron renombradas respecto al origen a fin de manejar nombres más representativos que faciliten las subsiguientes etapas del proceso y la comunicación de los resultados.
 Una muestra de los datos se puede observar a continuación:
+
 <font size=1>
 ```{r echo=FALSE}
 
@@ -288,28 +290,46 @@ head(base_filtrada)
 _Tabla. Muestra premilinar de los datos_
 
 
-# Detección de anomalías
+# Detección de anomalías {.tabset .tabset-fade .tabset-pills}
 
-### 1. Formato de las variables no coincide con su tipo de variable
+En esta etapa del proceso nos ocupamos de compartir los hallazgos en materia de anomalías sobre los datos, usando las siguientes técnicas para su detección y evidenciando las razones que nos condujeron a tomar decisiones al respecto de su solución.
 
-Equipo Fecha:
-Se castea el campo a tipo Date para mejor tratamiento de la variable.
-```{r}
+1.Formato de las variables no coincide con su tipo de variable
+2.Observaciones duplicadas
+3.Campos vacíos
+4.Datos atípicos
+5.Errores de digitación
+6.Valores inválidos o sin referencia en el diccionario de variables
+7.Valores inconsistentes
+
+## 1. Formato de las variables no coincide con su tipo de variable {.tabset .tabset-fade .tabset-pills}
+
+### Fecha:
+
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$FECHA)`*. 
+```{r Tratamiento fecha, echo=FALSE}
 base_filtrada$FECHA = as.Date(base_filtrada$FECHA,format= "%Y-%m-%d")
 class(base_filtrada$FECHA)
-
 ```
+A fin de facilitar el tratamiento con esta variable, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$FECHA)`*
 
-Equipo Local
+### Equipo Local
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*.
 ```{r}
 base_filtrada$EQUIPO_LOCAL = factor(base_filtrada$EQUIPO_LOCAL)
+```
+A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*, cuyas categorías son:
+```{r}
 tabla_freq(base_filtrada$EQUIPO_LOCAL)
-
 ```
 
-Equipo visitante
+### Equipo visitante
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*.
 ```{r}
 base_filtrada$EQUIPO_VISITANTE = factor(base_filtrada$EQUIPO_VISITANTE)
+```
+A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*, cuyas categorías son:
+```{r}
 tabla_freq(base_filtrada$EQUIPO_VISITANTE)
 ```
 
