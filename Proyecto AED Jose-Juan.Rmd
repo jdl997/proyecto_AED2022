@@ -41,6 +41,8 @@ library(mice)
 library(BBmisc)
 library(dplyr)
 library(janitor)
+library(stringr)
+
 
 
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
@@ -313,13 +315,13 @@ tabla_freq(base_filtrada$EQUIPO_VISITANTE)
 
 Resultado al finalizar el partido
 ```{r}
-base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL)
+base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL, labels= c("Visitante","Empate","Local"))
 tabla_freq(base_filtrada$RESULTADO_FINAL)
 ```
 
 Resultado al finalizar en el primer tiempo
 ```{r}
-base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
+base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD, labels= c("Visitante","Empate","Local"))
 tabla_freq(base_filtrada$RESULTADO_MITAD)
 
 ```
@@ -369,6 +371,7 @@ base_filtrada= base_filtrada[!duplicated(base_filtrada), ]
 Tenemos 9 variables que tienen 481 NA's los cuales representan un 66% del dataset. Entraremos analizarlas
 ```{r}
 summary(base_filtrada)
+aggr(base_filtrada, numbers=T, prop=F,sortVars = T,cex.axis = 0.5)
 ```
 Nos damos cuenta que las siguientes 9 variables nulas se encuentran concentradas en 478 registros por lo que se deciden a borrar las siguientes columnas:
 LOCAL_TIROS_LIBRES
@@ -476,7 +479,7 @@ base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2018-10-28") & bas
 ## Panathinaikos VS	Olympiakos
 base_filtrada$LOCAL_GOLES[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
 base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
-base_filtrada$RESULTADO_FINAL[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "A"
+base_filtrada$RESULTADO_FINAL[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "Visitante"
 base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 6
 base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 12
 base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
@@ -517,6 +520,10 @@ Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en
 ```{r}
 tabla_freq(base_filtrada$LOCAL_GOLES)
 ```
+```{r}
+boxplot(base_filtrada$LOCAL_GOLES, base_filtrada$VISITANTE_GOLES, names=c("LOCAL_GOLES","VISITANTE_GOLES"))
+```
+
 Se procede a identificar los registros invalidos y atipicos en las variables "LOCAL_GOLES" y "VISITANTE_GOLES" para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web: [Resultados](https://el.soccerway.com/matches/2020/06/20/greece/super-league/aek-athens-fc/aris-thessaloniki-fc/3272496/)
 ```{r}
 base_filtrada[(base_filtrada$LOCAL_GOLES<0 | base_filtrada$LOCAL_GOLES> 8) & !is.na(base_filtrada$LOCAL_GOLES),]
@@ -530,6 +537,18 @@ base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== 33]= 3
 
 base_filtrada[(base_filtrada$FECHA == as.Date("2020-06-20") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-01-17") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-03-21") & base_filtrada$EQUIPO_LOCAL == "PAOK"),]
 ```
+
+### 5. Errores de digitación:
+
+```{r}
+tabla_variables <- data.frame (unique(base_filtrada$EQUIPO_LOCAL), unique(base_filtrada$EQUIPO_VISITANTE))
+knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Tabla. Descripción de las Variables para el análisis")
+
+unique(base_filtrada$EQUIPO_LOCAL)
+unique(base_filtrada$EQUIPO_VISITANTE)
+```
+
+
 
 # Creación de Variables
 
