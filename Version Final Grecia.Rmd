@@ -577,10 +577,8 @@ La unica anomalia de valores invalidos fue corregida en el punto #4 donde se enc
 ### 7.Valores inconsistentes:
 
 ```{r}
-base_filtrada[]
+base_filtrada[base_filtrada$RESULTADO_MITAD > base_filtrada$RESULTADO_FINAL,]
 ```
-
-Prueba nuevo cambio
 
 # Creación de Variables
 
