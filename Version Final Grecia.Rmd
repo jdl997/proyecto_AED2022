@@ -580,7 +580,7 @@ La unica anomalia de valores invalidos fue corregida en el punto #4 donde se enc
 base_filtrada[]
 ```
 
-
+Prueba nuevo cambio
 
 # Creación de Variables
 
