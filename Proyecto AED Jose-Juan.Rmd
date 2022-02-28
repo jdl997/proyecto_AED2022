@@ -287,7 +287,6 @@ head(base_filtrada)
 </font>
 _Tabla. Muestra premilinar de los datos_
 
-
 # Detección de anomalías {.tabset .tabset-fade .tabset-pills}
 
 En esta etapa del proceso nos ocupamos de compartir los hallazgos en materia de anomalías sobre los datos, usando las siguientes técnicas para su detección y evidenciando las razones que nos condujeron a tomar decisiones al respecto de su solución.
@@ -391,8 +390,8 @@ capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.
 
 Tenemos 9 variables que tienen 481 NA's los cuales representan un 66% del dataset. Entraremos analizarlas
 ```{r}
-capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7), file=tempfile())
 summary(base_filtrada)
+aggr(base_filtrada, numbers=T, prop=F,sortVars = T,cex.axis = 0.5)
 ```
 Nos damos cuenta que las siguientes 9 variables nulas se encuentran concentradas en 478 registros por lo que se deciden a borrar las siguientes columnas:
 LOCAL_TIROS_LIBRES
@@ -500,7 +499,7 @@ base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2018-10-28") & bas
 ## Panathinaikos VS	Olympiakos
 base_filtrada$LOCAL_GOLES[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
 base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
-base_filtrada$RESULTADO_FINAL[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "A"
+base_filtrada$RESULTADO_FINAL[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "Visitante"
 base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 6
 base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 12
 base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
@@ -532,13 +531,19 @@ base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & bas
 base_filtrada[base_filtrada$FECHA == as.Date("2018-09-16") | (base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete") | (base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris") | (base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios") | (base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") |(base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") ,]
 ```
 
-## 4. Datos atípicos
+
+
+### 4. Datos atípicos
 
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
 Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana. 
 ```{r}
 tabla_freq(base_filtrada$LOCAL_GOLES)
 ```
+```{r}
+boxplot(base_filtrada$LOCAL_GOLES, base_filtrada$VISITANTE_GOLES, names=c("LOCAL_GOLES","VISITANTE_GOLES"))
+```
+
 Se procede a identificar los registros invalidos y atipicos en las variables "LOCAL_GOLES" y "VISITANTE_GOLES" para ser corregidos encontrando los resultados de los partidos en la siguiente pagina web: [Resultados](https://el.soccerway.com/matches/2020/06/20/greece/super-league/aek-athens-fc/aris-thessaloniki-fc/3272496/)
 ```{r}
 base_filtrada[(base_filtrada$LOCAL_GOLES<0 | base_filtrada$LOCAL_GOLES> 8) & !is.na(base_filtrada$LOCAL_GOLES),]
@@ -551,6 +556,27 @@ base_filtrada$VISITANTE_GOLES[base_filtrada$VISITANTE_GOLES== -1]= 1
 base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== 33]= 3
 
 base_filtrada[(base_filtrada$FECHA == as.Date("2020-06-20") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-01-17") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-03-21") & base_filtrada$EQUIPO_LOCAL == "PAOK"),]
+```
+
+### 5. Errores de digitación:
+
+La unica variable que podria presentar errores de digitación seria en los equipos, por lo que se comparan los valores unicos de equipos locales vs visitante.  
+```{r}
+local= unique(base_filtrada$EQUIPO_LOCAL)
+Visit= unique(base_filtrada$EQUIPO_VISITANTE)
+
+tabla_variables <- data.frame (local[str_order(local, numeric = TRUE)], Visit[str_order(Visit, numeric = TRUE)])
+knitr::kable(tabla_variables, "simple",   col.names = c('Equipos Locales', 'Equipos Visitantes'), align = "llc", caption = "Tabla. Comparación entre equipos de local y visitante")
+
+```
+### 6. Valores inválidos o sin referencia en el diccionario de variables:
+
+La unica anomalia de valores invalidos fue corregida en el punto #4 donde se encontraron valores de goles negativos lo cual no tiene sentido en el contexto.
+
+### 7.Valores inconsistentes:
+
+```{r}
+base_filtrada[]
 ```
 
 # Creación de Variables
