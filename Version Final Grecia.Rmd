@@ -224,7 +224,6 @@ En esta base de datos se encuentran la información de los partidos disputados e
 ### Temporada 2020-2021
 En esta base de datos se encuentran la información de los partidos disputados en la temporada 2020-2021 de la  Superliga de Grecia, distribuida en `r ncol(base2021)` columnas y `r nrow(base2021)` observaciones.
 
-El número de columnas que contiene la base de datos es de `r ncol(base2021)` y el número de registros cargados es de `r nrow(base2021)`.
 
 ## Consolidación de los datos {.tabset .tabset-fade .tabset-pills}
 
@@ -318,7 +317,7 @@ base_filtrada$EQUIPO_LOCAL = factor(base_filtrada$EQUIPO_LOCAL)
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_LOCAL)))`*]
 
-###Equipo visitante
+### Equipo visitante
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*.
 ```{r}
 base_filtrada$EQUIPO_VISITANTE = factor(base_filtrada$EQUIPO_VISITANTE)
@@ -385,36 +384,26 @@ En vista de que estos registros idénticos producirían sesgos en el momento de 
 ## Campos vacíos
 
 ```{r}
-inspect_na(base_filtrada)
-capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7), file=tempfile())
-```
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.5, cex.numbers = 0.5), file=tempfile())
+columnas_na = inspect_na(base_filtrada) 
+pct_na = 66
+columnas_na = columnas_na[columnas_na$pcnt > pct_na,]
 
-Tenemos 9 variables que tienen 481 NA's los cuales representan un 66% del dataset. Entraremos analizarlas
-```{r}
-summary(base_filtrada)
-aggr(base_filtrada, numbers=T, prop=F,sortVars = T,cex.axis = 0.5)
 ```
-Nos damos cuenta que las siguientes 9 variables nulas se encuentran concentradas en 478 registros por lo que se deciden a borrar las siguientes columnas:
-LOCAL_TIROS_LIBRES
-VISITANTE_TIROS_LIBRES
-Bb1X2
-BbMxH
-BbAvH
-BbMxD
-BbAvD
-BbMxA
-BbAvA
-La mayoria de estas variables hacen referencia a cuotas de apuestas publicadas en BetBrain.
+Al realizar la validación de campos vacios, como ilustra el anterior gráfico, 478 de los registros se concentran en `r length(columnas_na$col_name)` variables [*`r gsub(",", ", ", collapse(sort(columnas_na$col_name)))`*] con valores NA, lo cual representa más del 66% del total de los datos. En vista de que se trata de información de menor relevancia para el análisis del proyecto (Estadísticas de juego y cuotas de casas de apuestas) nuestra decisión es prescindir de estas columnas.
+
 ```{r}
-base_filtrada[rowSums(is.na(base_filtrada))==9,]
+###base_filtrada[rowSums(is.na(base_filtrada))==9,]
 base_filtrada= subset( base_filtrada, select = -c(LOCAL_TIROS_LIBRES, VISITANTE_TIROS_LIBRES, Bb1X2, BbMxH, BbAvH, BbMxD, BbAvD, BbMxA, BbAvA) )
-str(base_filtrada)
 ```
-De las variables restantes tambien encontramos una cantidad minima de NA's la cual entraremos analizar 
+Las nuevas dimensiones de la base de datos, con este cambio son `r ncol(base_filtrada)` columnas y `r nrow(base_filtrada)` registros.
+
 ```{r}
-summary(base_filtrada)
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.5, cex.numbers = 0.5), file=tempfile())
+columnas_na = inspect_na(base_filtrada) 
+
 ```
-Encontramos que los anteriores NA's mencionados se distribuyen en 11 registros. La fila que solo contiene la fecha sera eliminada, mientras que las otras se les imputara los datos por medio de Web Scraping manual, a partir de la información de la siguiente pagina Web: [Estadisticas](https://www.transfermarkt.mx/)
+Adicionalmente, al realizar el análisis de las variables restantes con valores nulos [*`r gsub(",", ", ", collapse(sort(columnas_na$col_name)))`*] encontramos que estas se distribuyen en 11 registros. Uno de los registros  sólo dispone información de fecha, con lo cual no representa una obsevación válida para el análisis y procedemos a borrarla. En cuanto a las demás pérdidas, revisamos con el equipo de recolección la posibilidad de imputarlos por medio de *Web Scraping* manual, siendo efectivamente identificada la información en la fuente del siguiente enlace en [transfermarkt.mx](https://www.transfermarkt.mx/).
 ```{r}
 base_filtrada[rowSums(is.na(base_filtrada)) > 0,]
 base_filtrada = base_filtrada[!rowSums(is.na(base_filtrada)) > 15,]
@@ -532,7 +521,12 @@ base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & bas
 base_filtrada[base_filtrada$FECHA == as.Date("2018-09-16") | (base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete") | (base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris") | (base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios") | (base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") |(base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") ,]
 ```
 
+```{r}
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.5, cex.numbers = 0.5), file=tempfile())
+columnas_na = inspect_na(base_filtrada) 
 
+```
+Finalizada la solución de estas anomalías, las nuevas dimensiones de la base de datos son `r ncol(base_filtrada)` columnas y `r nrow(base_filtrada)` registros.
 
 ### 4. Datos atípicos
 
