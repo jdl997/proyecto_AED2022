@@ -224,7 +224,6 @@ En esta base de datos se encuentran la información de los partidos disputados e
 ### Temporada 2020-2021
 En esta base de datos se encuentran la información de los partidos disputados en la temporada 2020-2021 de la  Superliga de Grecia, distribuida en `r ncol(base2021)` columnas y `r nrow(base2021)` observaciones.
 
-El número de columnas que contiene la base de datos es de `r ncol(base2021)` y el número de registros cargados es de `r nrow(base2021)`.
 
 ## Consolidación de los datos {.tabset .tabset-fade .tabset-pills}
 
@@ -277,7 +276,7 @@ knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de var
 ```
 </font>
 
-Una muestra de los datos se puede observar a continuación:
+Sobre esta  base de datos unificada las variables fueron renombradas respecto al origen a fin de manejar nombres más representativos que faciliten las subsiguientes etapas del proceso y la comunicación de los resultados. Una muestra de los datos se puede observar a continuación:
 <font size=1>
 ```{r echo=FALSE}
 
@@ -287,16 +286,10 @@ head(base_filtrada)
 </font>
 _Tabla. Muestra premilinar de los datos_
 
-<<<<<<< HEAD
+
 # Detección de anomalías {.tabset .tabset-fade .tabset-pills}
-=======
+En esta etapa del proceso nos ocupamos de compartir los hallazgos en materia de anomalías sobre los datos, usando las siguientes técnicas para su detección y evidenciando las razones que nos condujeron a tomar decisiones al respecto de su solución.
 
-# Detección de anomalías
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
-
-### 1. Formato de las variables no coincide con su tipo de variable
-
-<<<<<<< HEAD
 1.Formato de las variables no coincide con su tipo de variable
 2.Observaciones duplicadas
 3.Campos vacíos
@@ -311,61 +304,37 @@ _Tabla. Muestra premilinar de los datos_
 
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$FECHA)`*. 
 ```{r Tratamiento fecha, include=FALSE}
-=======
-Equipo Fecha:
-Se castea el campo a tipo Date para mejor tratamiento de la variable.
-```{r}
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 base_filtrada$FECHA = as.Date(base_filtrada$FECHA,format= "%Y-%m-%d")
 class(base_filtrada$FECHA)
 
 ```
+A fin de facilitar el tratamiento con esta variable, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$FECHA)`*.
 
-Equipo Local
+### Equipo Local
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*.
 ```{r}
 base_filtrada$EQUIPO_LOCAL = factor(base_filtrada$EQUIPO_LOCAL)
-<<<<<<< HEAD
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_LOCAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_LOCAL)))`*]
-=======
-tabla_freq(base_filtrada$EQUIPO_LOCAL)
 
-```
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
-
-Equipo visitante
+### Equipo visitante
+Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*.
 ```{r}
 base_filtrada$EQUIPO_VISITANTE = factor(base_filtrada$EQUIPO_VISITANTE)
-<<<<<<< HEAD
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$EQUIPO_VISITANTE)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$EQUIPO_VISITANTE)))`*]
-=======
-tabla_freq(base_filtrada$EQUIPO_VISITANTE)
-```
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 
 ### Resultado final del partido
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$RESULTADO_FINAL)`*.
 ```{r}
-<<<<<<< HEAD
-base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL)
-=======
 base_filtrada$RESULTADO_FINAL = factor(base_filtrada$RESULTADO_FINAL, labels= c("Visitante","Empate","Local"))
-tabla_freq(base_filtrada$RESULTADO_FINAL)
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$RESULTADO_FINAL)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$RESULTADO_FINAL)))`*]
 
 ### Resultado al finalizar el primer tiempo
 Identificamos que esta variable es leida del origen cómo tipo *`r class(base_filtrada$RESULTADO_MITAD)`*.
 ```{r}
-<<<<<<< HEAD
-base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD)
-=======
 base_filtrada$RESULTADO_MITAD = factor(base_filtrada$RESULTADO_MITAD, labels= c("Visitante","Empate","Local"))
-tabla_freq(base_filtrada$RESULTADO_MITAD)
-
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 ```
 A fin de facilitar el tratamiento con esta variable categórica, la corrección consiste en realizar el cambio a tipo *`r class(base_filtrada$RESULTADO_MITAD)`*, cuyas categorías son: [*`r gsub(",", ", ", collapse(levels(base_filtrada$RESULTADO_MITAD)))`*]
 
@@ -415,36 +384,26 @@ En vista de que estos registros idénticos producirían sesgos en el momento de 
 ## Campos vacíos
 
 ```{r}
-inspect_na(base_filtrada)
-capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.7, cex.numbers = 0.7), file=tempfile())
-```
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.5, cex.numbers = 0.5), file=tempfile())
+columnas_na = inspect_na(base_filtrada) 
+pct_na = 66
+columnas_na = columnas_na[columnas_na$pcnt > pct_na,]
 
-Tenemos 9 variables que tienen 481 NA's los cuales representan un 66% del dataset. Entraremos analizarlas
-```{r}
-summary(base_filtrada)
-aggr(base_filtrada, numbers=T, prop=F,sortVars = T,cex.axis = 0.5)
 ```
-Nos damos cuenta que las siguientes 9 variables nulas se encuentran concentradas en 478 registros por lo que se deciden a borrar las siguientes columnas:
-LOCAL_TIROS_LIBRES
-VISITANTE_TIROS_LIBRES
-Bb1X2
-BbMxH
-BbAvH
-BbMxD
-BbAvD
-BbMxA
-BbAvA
-La mayoria de estas variables hacen referencia a cuotas de apuestas publicadas en BetBrain.
+Al realizar la validación de campos vacios, como ilustra el anterior gráfico, 478 de los registros se concentran en `r length(columnas_na$col_name)` variables [*`r gsub(",", ", ", collapse(sort(columnas_na$col_name)))`*] con valores NA, lo cual representa más del 66% del total de los datos. En vista de que se trata de información de menor relevancia para el análisis del proyecto (Estadísticas de juego y cuotas de casas de apuestas) nuestra decisión es prescindir de estas columnas.
+
 ```{r}
-base_filtrada[rowSums(is.na(base_filtrada))==9,]
+###base_filtrada[rowSums(is.na(base_filtrada))==9,]
 base_filtrada= subset( base_filtrada, select = -c(LOCAL_TIROS_LIBRES, VISITANTE_TIROS_LIBRES, Bb1X2, BbMxH, BbAvH, BbMxD, BbAvD, BbMxA, BbAvA) )
-str(base_filtrada)
 ```
-De las variables restantes tambien encontramos una cantidad minima de NA's la cual entraremos analizar 
+Las nuevas dimensiones de la base de datos, con este cambio son `r ncol(base_filtrada)` columnas y `r nrow(base_filtrada)` registros.
+
 ```{r}
-summary(base_filtrada)
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.5, cex.numbers = 0.5), file=tempfile())
+columnas_na = inspect_na(base_filtrada) 
+
 ```
-Encontramos que los anteriores NA's mencionados se distribuyen en 11 registros. La fila que solo contiene la fecha sera eliminada, mientras que las otras se les imputara los datos por medio de Web Scraping manual, a partir de la información de la siguiente pagina Web: [Estadisticas](https://www.transfermarkt.mx/)
+Adicionalmente, al realizar el análisis de las variables restantes con valores nulos [*`r gsub(",", ", ", collapse(sort(columnas_na$col_name)))`*] encontramos que estas se distribuyen en 11 registros. Uno de los registros  sólo dispone información de fecha, con lo cual no representa una obsevación válida para el análisis y procedemos a borrarla. En cuanto a las demás pérdidas, revisamos con el equipo de recolección la posibilidad de imputarlos por medio de *Web Scraping* manual, siendo efectivamente identificada la información en la fuente del siguiente enlace en [transfermarkt.mx](https://www.transfermarkt.mx/).
 ```{r}
 base_filtrada[rowSums(is.na(base_filtrada)) > 0,]
 base_filtrada = base_filtrada[!rowSums(is.na(base_filtrada)) > 15,]
@@ -545,7 +504,7 @@ base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-03-17") & bas
 ## Panathinaikos	VS OFI Crete
 base_filtrada$LOCAL_GOLES_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
 base_filtrada$VISITANTE_GOLES_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
-base_filtrada$RESULTADO_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "A"
+base_filtrada$RESULTADO_MITAD[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= "Visitante"
 base_filtrada$LOCAL_TIROS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 4
 base_filtrada$VISITANTE_TIROS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 10
 base_filtrada$LOCAL_TIROS_PUERTA[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
@@ -556,15 +515,24 @@ base_filtrada$LOCAL_AMARILLAS[base_filtrada$FECHA == as.Date("2019-08-31") & bas
 base_filtrada$VISITANTE_AMARILLAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 3
 base_filtrada$LOCAL_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 1
 base_filtrada$VISITANTE_ROJAS[base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos"]= 0
+
+## Giannina	VS Larisa
+base_filtrada$LOCAL_GOLES[base_filtrada$FECHA == as.Date("2020-11-04") & base_filtrada$EQUIPO_LOCAL== "Giannina"]= 1
+base_filtrada$VISITANTE_GOLES[base_filtrada$FECHA == as.Date("2020-11-04") & base_filtrada$EQUIPO_LOCAL== "Giannina"]= 2
 ```
 
 ```{r}
-base_filtrada[base_filtrada$FECHA == as.Date("2018-09-16") | (base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete") | (base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris") | (base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios") | (base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") |(base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") ,]
+base_filtrada[base_filtrada$FECHA == as.Date("2018-09-16") | (base_filtrada$FECHA == as.Date("2018-09-15") & base_filtrada$EQUIPO_LOCAL== "OFI Crete") | (base_filtrada$FECHA == as.Date("2018-09-17") & base_filtrada$EQUIPO_LOCAL== "Aris") | (base_filtrada$FECHA == as.Date("2018-10-28") & base_filtrada$EQUIPO_LOCAL== "Panionios") | (base_filtrada$FECHA == as.Date("2019-03-17") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") |(base_filtrada$FECHA == as.Date("2019-08-31") & base_filtrada$EQUIPO_LOCAL== "Panathinaikos") | (base_filtrada$FECHA == as.Date("2020-11-04") & base_filtrada$EQUIPO_LOCAL== "Giannina") ,]
 ```
 
+```{r}
+capture.output(aggr(base_filtrada, numbers=TRUE, prop=FALSE, sortVars=TRUE, cex.axis = 0.5, cex.numbers = 0.5), file=tempfile())
+columnas_na = inspect_na(base_filtrada) 
 
+```
+Finalizada la solución de estas anomalías, las nuevas dimensiones de la base de datos son `r ncol(base_filtrada)` columnas y `r nrow(base_filtrada)` registros.
 
-### 4. Datos atípicos
+## Datos atípicos
 
 Los valores -2 y NA, no tienen sentido dentro del significado de la variable (Cantidad de goles del local al terminar el partido).
 Aunque 22 y 33 goles no es un valor invalido, si es un valor atipico teniendo en cuenta que la mayor cantidad de goles anotados en la historia en un partido es Australia 31 - 0 Samoa Americana. 
@@ -589,7 +557,7 @@ base_filtrada$LOCAL_GOLES[base_filtrada$LOCAL_GOLES== 33]= 3
 base_filtrada[(base_filtrada$FECHA == as.Date("2020-06-20") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-01-17") & base_filtrada$EQUIPO_LOCAL == "AEK") | (base_filtrada$FECHA == as.Date("2021-03-21") & base_filtrada$EQUIPO_LOCAL == "PAOK"),]
 ```
 
-### 5. Errores de digitación:
+## Errores de digitación
 
 La unica variable que podria presentar errores de digitación seria en los equipos, por lo que se comparan los valores unicos de equipos locales vs visitante.  
 ```{r}
@@ -600,21 +568,50 @@ tabla_variables <- data.frame (local[str_order(local, numeric = TRUE)], Visit[st
 knitr::kable(tabla_variables, "simple",   col.names = c('Equipos Locales', 'Equipos Visitantes'), align = "llc", caption = "Tabla. Comparación entre equipos de local y visitante")
 
 ```
-### 6. Valores inválidos o sin referencia en el diccionario de variables:
+## Valores inválidos o sin referencia en el diccionario de variables
 
 La unica anomalia de valores invalidos fue corregida en el punto #4 donde se encontraron valores de goles negativos lo cual no tiene sentido en el contexto.
 
-<<<<<<< HEAD
-### 7.Valores inconsistentes:
+## Valores inconsistentes
 
+Se trata de buscar valores inconsistentes al comprobar que:
+1) El marcador a mitad del tiempo siempre tiene que ser menor al resultado luego de terminar el partido
+2) Los goles marcado deben ser congruentes con el resultado del partido. Ejemplo: "Si el partido concluyo 1-1 en goles el resultado_final debe ser empatado".
 ```{r}
-base_filtrada[]
+base_filtrada[base_filtrada$LOCAL_GOLES_MITAD > base_filtrada$LOCAL_GOLES,]
+
+base_filtrada[(base_filtrada$LOCAL_GOLES > base_filtrada$VISITANTE_GOLES & base_filtrada$RESULTADO_FINAL != "Local") | (base_filtrada$LOCAL_GOLES == base_filtrada$VISITANTE_GOLES & base_filtrada$RESULTADO_FINAL != "Empate") | (base_filtrada$LOCAL_GOLES < base_filtrada$VISITANTE_GOLES & base_filtrada$RESULTADO_FINAL != "Visitante"),]
+
+
 ```
-=======
-
-
->>>>>>> 16e8b541c201d15bb63426996b5b0b3117b0bec8
 
 # Creación de Variables
 
+Variable para saber si se jugo con publico por la pandemia
+```{r}
+base_filtrada$Con_Publico = ifelse(base_filtrada$FECHA >= as.Date("2020-03-01") & base_filtrada$FECHA < as.Date("2020-10-24"), "NO", "SI")
+```
+
+Se decide crear la variable sintetica "Es_equipo_grande" el cual es un indicador de si un equipo es de renombre. Esta variable se calcula a partir de la cantidad de titulos obtenidos. [Estadisticas](https://es.wikipedia.org/wiki/Superliga_de_Grecia#T%C3%ADtulos_por_club)
+![](titulos.png)
+```{r}
+equipos_grandes = c("Olympiakos", "Panathinaikos", "AEK", "PAOK", "Aris")
+base_filtrada$Es_equipo_local_grande = ifelse(base_filtrada$EQUIPO_LOCAL %in% equipos_grandes, "SI", "NO")
+str(base_filtrada)
+```
+
+
 # Conclusiones y recomendaciones
+
+Este informe ha sido dedicado a documentar el trabajo de los equipos de analítica para preparar los datos disponibles que permitan  evaluar cómo la situación de pandemia afectó el rendimiento de los equipos de fútbol en sus juegos de local, particularmente en dicho efecto sobre los equipos de la Súperliga de fútbol de Grecia. 
+
+Hemos revisado estos aspectos a lo largo de cuatro secciones en donde abordamos detalles respecto a los datos recolectados y a su estructura de variables. Nos referimos además a los hallazgos en materia de anomalías y a las respectivas transformaciones  realizadas en consecuencia respecto a:
+- Eliminar doce registros duplicados que introducian sesgo a futuros procesos analíticos. 
+- Eliminar nueve columnas que no aportaban información suficiente debido a que contenían valores vacíos en más del 66% de los registros.
+- Imputar información conseguida a través de *web scrapping* manual para completar los registros identificados con datos nulos en variables que pudieron ser recolectadas y agregar valor a futuros procesos analíticos.
+- No encontramos errores de digitación después de contrastar la información disponible en la base de datos con los datos verificados en fuentes oficiales de la Superliga de Grecia.
+- Imputar los datos correctos asociados a las anomalías en el caso específico de los casos de goles negativos y por fuera del rango válido de acuerdo con las estadísticas.
+
+También hemos descrito las variables que adicionamos a la base de datos, las cuales consolidan información respecto a si el partido se desarrolló o no durante el período de ausencia de público, e indican el renombre de un equipo a partir de los títulos obtenidos, a fin de para favorecer a los trabajos futuros de este proyecto de analítica.
+
+Algunas recomendaciones de interés para los equipos de recolección de datos consisten en asegurar la extracción de las fuentes de origen usando herramientas que automaticen el levantamiento, con calidad, y reduzcan el esfuerzo de los análisis de exploración de los datos por los demás equipos de analítica.  
