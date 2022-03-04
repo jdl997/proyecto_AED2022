@@ -42,12 +42,8 @@ library(BBmisc)
 library(dplyr)
 library(janitor)
 library(stringr)
-
-
-
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
 #FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VARIABLES CONTINUAS
-
 descriptivas2<-function(Continua,Categorías){
   x1=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){length(na.omit(x))})
   names(x1)=c("Categoría","Obs")
@@ -89,7 +85,6 @@ tabla_freq<- function(x,total=1,na="ifany"){
   }
 }
 #FUNCIÓN PARA ESTADÍSTICAS DESCRIPTIVAS PARA VAR DISCRETAS
-
 tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
   if (prop==0) {
     M=as.data.frame.matrix(table(x, y, useNA = na))
@@ -589,7 +584,7 @@ base_filtrada[(base_filtrada$LOCAL_GOLES > base_filtrada$VISITANTE_GOLES & base_
 
 Variable para saber si se jugo con publico por la pandemia
 ```{r}
-base_filtrada$Con_Publico = ifelse(base_filtrada$FECHA >= as.Date("2020-03-01") & base_filtrada$FECHA < as.Date("2020-10-24"), "NO", "SI")
+base_filtrada$Con_Publico = ifelse(base_filtrada$FECHA >= as.Date("2020-03-03") & base_filtrada$FECHA < as.Date("2021-07-09"), "NO", "SI")
 ```
 
 Se decide crear la variable sintetica "Es_equipo_grande" el cual es un indicador de si un equipo es de renombre. Esta variable se calcula a partir de la cantidad de titulos obtenidos. [Estadisticas](https://es.wikipedia.org/wiki/Superliga_de_Grecia#T%C3%ADtulos_por_club)
