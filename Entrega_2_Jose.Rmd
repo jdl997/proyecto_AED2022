@@ -1,0 +1,257 @@
+---
+output: pdf_document
+fontsize: 12pt
+geometry: margin=0.3in
+header-includes:
+- \usepackage[T1]{fontenc}
+- \usepackage{array}
+- \usepackage{booktabs}
+- \usepackage{xcolor}
+- \usepackage{makecell}
+- \usepackage{longtable}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{hyperref}
+- \setmainfont{Helvetica}
+- \pagenumbering{gobble}
+- \DeclareTextCommand{\nobreakspace}{TU}{\leavevmode\nobreak\ }
+documentclass: article
+classoption: a4paper
+---
+
+\begin{titlepage}
+	\centering
+	\vspace{5cm}
+	{\huge\scshape\LARGE Análisis del rendimiento de los equipos de fútbol en tiempos de pandemia\par}
+	{\scshape\LARGE El caso de la Súperliga de Grecia\par}
+	\vspace{6cm}
+	{\bfseries AUTORES:\par}
+	{\scshape\itshape Juan David López H.\par}
+	{\scshape\itshape José Belmer Guerrero A.\par}
+	\vspace{6cm}
+	{\large UNIVERSIDAD ICESI\par}
+	{\large	Facultad de Ingeniería\par}
+	{\large Santiago de Cali\par}
+	{\large 2022\par}
+\end{titlepage}
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r paquetes y funciones, message=FALSE, warning=FALSE, include=FALSE, paged.print=FALSE}
+library(car)
+library(nortest)
+library(corrplot)
+library(ggplot2)
+library(directlabels)
+library(ggthemes)
+library(scales)
+library(gridExtra)
+library(readxl)
+library(reshape2)
+library(dplyr)
+library(e1071)
+library(Hmisc)
+library(funModeling)
+library(inspectdf)
+library(VIM)
+library(GGally)
+library(stringr)
+library(xtable) #este no lo tienen
+library(mice)
+library(BBmisc)
+library(janitor)
+library(stringr)
+
+
+descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
+
+tabla_freq<- function(x,total=1,na="ifany"){
+  if (total==1) {
+    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+  names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+  M$Categoria=as.character(M$Categoria)
+  M[nrow(M)+1,]=c("Total",sum(M$`Freq. Abs.`),sum(M$`Freq. Rel.`))
+  M$`Freq. Rel.`=as.numeric(M$`Freq. Rel.`)
+  M$`Freq. Abs.`=as.numeric(M$`Freq. Abs.`)
+  M
+  } else{
+    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+    M
+  }
+}
+
+descriptivas2<-function(Continua,Categorias){
+  x1=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){length(na.omit(x))})
+  names(x1)=c("Categoría","Obs")
+  x2=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){min(na.omit(x))})
+  names(x2)=c("Categoría","Mínimo")
+  x3=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){quantile(na.omit(x), prob =0.25)})
+  names(x3)=c("Categoría","1er Q")
+  x4=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){median(na.omit(x))})
+  names(x4)=c("Categoría","Mediana")
+  x5=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){mean(na.omit(x))})
+  names(x5)=c("Categoría","Media")
+  x6=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){quantile(na.omit(x), prob =0.75)})
+  names(x6)=c("Categoría","3er Q")
+  x7=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){max(na.omit(x))})
+  names(x7)=c("Categoría","Máximo")
+  x8=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){sd(na.omit(x))})
+  names(x8)=c("Categoría","Desv Est")
+  x9=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){skewness(na.omit(x))})
+  names(x9)=c("Categoría","Asimetría")
+  x10=aggregate.data.frame(Continua, by=list(Categorias), FUN=function(x){kurtosis(na.omit(x))})
+  names(x10)=c("Categoría","Curtosis")
+  cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)[,-seq(3,19,2)]
+}
+
+tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
+  if (prop==0) {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoria=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoria=as.character(M$Categoria)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    M
+  } else if (prop==1 & suma=="filas") {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoria=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoria=as.character(M$Categoria)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    for (i in 2:ncol(M)) {
+      M[,i]=M[,i]/M[,ncol(M)]
+    }
+    M
+  } else {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoria=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoria=as.character(M$Categoria)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    for (i in 1:nrow(M)) {
+      M[i,2:ncol(M)]=M[i,2:ncol(M)]/M[nrow(M),2:ncol(M)]
+    }
+    M 
+  }
+}
+
+```
+
+\newpage
+# Introducción
+
+Nuestra firma, siempre interesada en producir valiosos insights para nuestros clientes, dedicó a uno de sus equipos de analítica a estudiar **cómo la situación extraordinaria de jugar partidos sin público en los estadios, por la situación de pandemia, afectó el rendimiento de los equipos de fútbol**, en vista de la supuesta ventaja que ofrecen los juegos de local.  En principio, este análisis es exploratorio de los datos y se enfoca particularmente en validar su efecto sobre los equipos de la Súperliga de Grecia. 
+
+El informe a continuación tiene como propósito documentar las actividades de descripción de los datos que realizó el equipo de analítica y que son producto de la recolección propia.  A continuación, el documento presenta cuatro secciones: en la primera, presentamos detalles respecto a los datos recolectados, su estructura y el proceso de limpieza y preparación realizados previamente; en la segunda nos referimos a los hallazgos observados durante la exploración de los datos y, finalmente, en la tercera sección consignamos las conclusiones al respecto del análisis.
+
+\newpage
+# Sobre los datos
+
+Los datos proceden de fuente propia producto de la recolección por parte de nuestro equipo y se dispusieron en tres 3 bases de datos: Temporada 2018-2019, Temporada 2019-2020 y Temporada 2020-2021. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+
+setwd("./")
+base1819 = read_excel("Grecia.xlsx", sheet = 3)
+base1920 = read_excel("Grecia.xlsx", sheet = 2)
+base2021 = read_excel("Grecia.xlsx", sheet = 1)
+
+```
+
+### Temporada 2018-1019
+En esta base de datos se encuentran la información de los partidos disputados en la temporada 2018-2019 de la  Superliga de Grecia, distribuida en `r ncol(base1819)` columnas y `r nrow(base1819)` observaciones.
+
+### Temporada 2019-2020
+En esta base de datos se encuentran la información de los partidos disputados en la temporada 2019-2020 de la  Superliga de Grecia, distribuida en `r ncol(base1920)` columnas y `r nrow(base1920)` observaciones.
+
+### Temporada 2020-2021
+En esta base de datos se encuentran la información de los partidos disputados en la temporada 2020-2021 de la  Superliga de Grecia, distribuida en `r ncol(base2021)` columnas y `r nrow(base2021)` observaciones.
+
+## Unificación de las fuentes
+
+```{r include=FALSE}
+base18_20= union_all(base1819, base1920)
+base18_21= union_all(base18_20, base2021)
+
+base_filtrada= base18_21[,c(2:22,41:47)]
+```
+
+Al unir las fuentes con los partidos disputados en las tres temporadas obtuvimos una nueva base de datos de `r ncol(base18_21)` columnas y `r nrow(base18_21)` registros, caracterizada por grupos de variables que se refieren a:
+
+* Datos básicos del partido
+* Estadísticas del juego
+* Cuotas de casas de apuestas
+
+De acuerdo con el análisis de las diferencias de estructura entre las bases y la investigación sobre la Superliga de Grecia, determinamos que las siguientes `r ncol(base_filtrada)` columnas constituyen el grupo de variables de interés para el presente proyecto de analítica y sobre ellas desarrollamos las actividades de limpieza y preparación de los datos.
+
+```{r echo=FALSE}
+
+# declaring the columns of data frame
+# assigning new names to the columns of the data frame
+colnames(base_filtrada) <- c('FECHA','EQUIPO_LOCAL','EQUIPO_VISITANTE','LOCAL_GOLES','VISITANTE_GOLES','RESULTADO_FINAL','LOCAL_GOLES_MITAD', 'VISITANTE_GOLES_MITAD', 'RESULTADO_MITAD', 'LOCAL_TIROS', 'VISITANTE_TIROS', 'LOCAL_TIROS_PUERTA', 'VISITANTE_TIROS_PUERTA', 'LOCAL_TIROS_LIBRES', 'VISITANTE_TIROS_LIBRES', 'LOCAL_CORNERS', 'VISITANTE_CORNERS', 'LOCAL_AMARILLAS', 'VISITANTE_AMARILLAS', 'LOCAL_ROJAS', 'VISITANTE_ROJAS', 'Bb1X2', 'BbMxH', 'BbAvH', 'BbMxD', 'BbAvD', 'BbMxA', 'BbAvA')
+
+# printing new data frame
+
+columnas= colnames(base_filtrada)
+Tipo_variables = c( 
+  "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta",  "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Contínua","Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua", "Cuantitativa Contínua") 
+
+rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(max(base_filtrada$FECHA),"%d-%m-%Y"),sep = " a "), collapse(sort(unique(base_filtrada$EQUIPO_LOCAL[!is.na(base_filtrada$EQUIPO_LOCAL)])), sep = ", "), collapse(sort(unique(base_filtrada$EQUIPO_VISITANTE[!is.na(base_filtrada$EQUIPO_VISITANTE)])), sep = ", "),
+paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_FINAL), sep = ", "), paste(min(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_MITAD), ", "), paste(min(base_filtrada$LOCAL_TIROS, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_CORNERS, na.rm = TRUE),max(base_filtrada$LOCAL_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE),max(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE),max(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE),max(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_ROJAS, na.rm = TRUE),max(base_filtrada$LOCAL_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE),max(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$Bb1X2, na.rm = TRUE),max(base_filtrada$Bb1X2, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxH, na.rm = TRUE),max(base_filtrada$BbMxH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxD, na.rm = TRUE),max(base_filtrada$BbMxD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvH, na.rm = TRUE),max(base_filtrada$BbAvH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvD, na.rm = TRUE),max(base_filtrada$BbAvD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxA, na.rm = TRUE),max(base_filtrada$BbMxA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvA, na.rm = TRUE),max(base_filtrada$BbAvA, na.rm = TRUE), sep = " a ") )
+
+tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
+knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Tabla. Descripción de las Variables para el análisis")
+
+```
+# Limpieza y preparación
+
+Identificada la estructura de datos sobre la cual trabajaremos el proyecto, realizamos las actividades de detección de anomalías en el formato de los datos, en registros duplicados, campos vacíos, datos atípicos o valores inconsistentes y, en consecuencia, las transformaciones que nos permitieron preparar los datos para desarrollar la exploración.  En resumen, los siguientes fueron los hallazgos que observamos sobre los datos de la fuente:
+- Existían Doce registros duplicados que introducian sesgo a futuros procesos analíticos. 
+- Nueve de las columnas candidatas no aportaban información suficiente debido a que contenían valores vacíos en más del 66% de los registros.
+- Algunos registros con campos vacíos o con valores inconsistentes y atípicos pudieron ser corregidos gracias a que pudimos imputarlos a través de información adicional levantada en la fuente original.
+
+Adicionalmente, sumamos dos variables a la base de datos del análisis, a fin de consolidar información que  será relevante en las siguientes tareas del proyecto de analítica.  La primera variable permite identificar si el partido se jugó durante el período de ausencia de público y la segunda clasifica el nivel del equipo que juega de local en función de la historia de títulos obtenidos.
+
+begin{table}[H]
+caption{Tabla. Descripción de las Variables para el análisis}
+```{r echo=FALSE}
+## Carga y preparación de los dats
+load("BDEntrega1.RData")
+
+base_filtrada$Con_Publico = factor(base_filtrada$Con_Publico, levels = c("SI", "NO"))
+base_filtrada$Es_equipo_local_grande = factor(base_filtrada$Es_equipo_local_grande, levels = c("SI", "NO"))
+
+columnas= colnames(base_filtrada)
+Tipo_variables = c( 
+  "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cualitativa Nominal", "Cuantitativa Discreta","Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cuantitativa Discreta", "Cualitativa Nominal", "Cualitativa Nominal") 
+
+rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(max(base_filtrada$FECHA),"%d-%m-%Y"),sep = " a "), collapse(sort(unique(base_filtrada$EQUIPO_LOCAL[!is.na(base_filtrada$EQUIPO_LOCAL)])), sep = ", "), collapse(sort(unique(base_filtrada$EQUIPO_VISITANTE[!is.na(base_filtrada$EQUIPO_VISITANTE)])), sep = ", "),
+paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_FINAL), sep = ", "), paste(min(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_MITAD), ", "), paste(min(base_filtrada$LOCAL_TIROS, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_CORNERS, na.rm = TRUE),max(base_filtrada$LOCAL_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE),max(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE),max(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE),max(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_ROJAS, na.rm = TRUE),max(base_filtrada$LOCAL_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE),max(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE), sep = " a "), collapse(levels(base_filtrada$Es_equipo_local_grande)), collapse(levels(base_filtrada$Es_equipo_local_grande)) )
+
+tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
+
+knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc")
+
+
+```
+end{table}
