@@ -1,0 +1,565 @@
+---
+title: "Entrega_2"
+author: "Juan David López"
+date: "3/2/2022"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Paquetes y funciones
+
+```{r echo=FALSE}
+library(car)
+library(nortest)
+library(corrplot)
+library(ggplot2)
+library(directlabels)
+library(ggthemes)
+library(scales)
+library(gridExtra)
+library(readxl)
+library(reshape2)
+library(dplyr)
+library(e1071)
+library(Hmisc)
+library(funModeling)
+library(inspectdf)
+library(VIM)
+library(GGally)
+
+descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
+
+tabla_freq<- function(x,total=1,na="ifany"){
+  if (total==1) {
+    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+  names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+  M$Categoría=as.character(M$Categoría)
+  M[nrow(M)+1,]=c("Total",sum(M$`Freq. Abs.`),sum(M$`Freq. Rel.`))
+  M$`Freq. Rel.`=as.numeric(M$`Freq. Rel.`)
+  M$`Freq. Abs.`=as.numeric(M$`Freq. Abs.`)
+  M
+  } else{
+    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+    M
+  }
+}
+
+descriptivas2<-function(Continua,Categorías){
+  x1=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){length(na.omit(x))})
+  names(x1)=c("Categoría","Obs")
+  x2=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){min(na.omit(x))})
+  names(x2)=c("Categoría","Mínimo")
+  x3=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){quantile(na.omit(x), prob =0.25)})
+  names(x3)=c("Categoría","1er Q")
+  x4=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){median(na.omit(x))})
+  names(x4)=c("Categoría","Mediana")
+  x5=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){mean(na.omit(x))})
+  names(x5)=c("Categoría","Media")
+  x6=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){quantile(na.omit(x), prob =0.75)})
+  names(x6)=c("Categoría","3er Q")
+  x7=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){max(na.omit(x))})
+  names(x7)=c("Categoría","Máximo")
+  x8=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){sd(na.omit(x))})
+  names(x8)=c("Categoría","Desv Est")
+  x9=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){skewness(na.omit(x))})
+  names(x9)=c("Categoría","Asimetría")
+  x10=aggregate.data.frame(Continua, by=list(Categorías), FUN=function(x){kurtosis(na.omit(x))})
+  names(x10)=c("Categoría","Curtosis")
+  cbind(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10)[,-seq(3,19,2)]
+}
+
+tabla_freq2<-function(x,y,na="ifany",prop=0, suma=c("filas","col")){
+  if (prop==0) {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoría=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    M
+  } else if (prop==1 & suma=="filas") {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoría=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    for (i in 2:ncol(M)) {
+      M[,i]=M[,i]/M[,ncol(M)]
+    }
+    M
+  } else {
+    M=as.data.frame.matrix(table(x, y, useNA = na))
+    M$Categoría=row.names(M)
+    rownames(M)=NULL
+    M=M[,c(ncol(M),1:ncol(M)-1)]
+    M$Categoría=as.character(M$Categoría)
+    M[nrow(M)+1,]=c("Total",colSums(M[,2:ncol(M)]))
+    M[,2:ncol(M)]=sapply(M[,2:ncol(M)], as.numeric)
+    M$Total=rowSums(M[,2:ncol(M)])
+    for (i in 1:nrow(M)) {
+      M[i,2:ncol(M)]=M[i,2:ncol(M)]/M[nrow(M),2:ncol(M)]
+    }
+    M 
+  }
+}
+
+```
+
+## Carga y preparación de los datos
+
+```{r echo=FALSE}
+load("BDEntrega1.RData")
+str(base_filtrada)
+```
+
+## Analisis Univariado 
+
+### Partidos de equipos de local y visitante
+
+Se puede ver que hay equipos que juegan mas que otros tanto de locales como de visitantes, esto se puede explicar por que puede que algunos equipos hayan Descendido o hayan pasado a cuadrangulares y finales. (Investigar esto)
+```{r echo=FALSE}
+TABLA_EQUIPO_LOCAL =tabla_freq(base_filtrada$EQUIPO_LOCAL,0)
+
+  ggplot(TABLA_EQUIPO_LOCAL, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Equipo Local",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,ifelse(max(TABLA_EQUIPO_LOCAL$`Freq. Rel.`)>0.5,1,0.5)), breaks = seq(0,ifelse(max(TABLA_EQUIPO_LOCAL$`Freq. Rel.`)>0.5,1,0.5),0.1), labels = percent)+
+  coord_flip()+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),hjust=-0.2, fontface = "bold", size=5)+
+  theme_base()
+```
+```{r include=FALSE}
+ggplot(TABLA_EQUIPO_LOCAL, aes(x=2, y=`Freq. Rel.`, fill=Categoría)) +
+  geom_bar(stat="identity", width=1, color="black") +
+  coord_polar("y", start=0)+
+  labs(fill="Equipo Local")+  #PARA CAMBIAR EL TÍTULO DE LAS CATEGORÍAS (LEGEND TITLE)
+  theme_void()+
+  geom_text(aes(label = percent(`Freq. Rel.`)),position = position_stack(vjust = 0.5),color = "white", size=5)+
+  xlim(0.5, 2.5)  #Y SE AGREGA ESTO
+```
+
+
+```{r echo=FALSE}
+TABLA_EQUIPO_VISITANTE =tabla_freq(base_filtrada$EQUIPO_VISITANTE,0)
+
+  ggplot(TABLA_EQUIPO_VISITANTE, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Equipo Visitante",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,ifelse(max(TABLA_EQUIPO_VISITANTE$`Freq. Rel.`)>0.5,1,0.5)), breaks = seq(0,ifelse(max(TABLA_EQUIPO_VISITANTE$`Freq. Rel.`)>0.5,1,0.5),0.1), labels = percent)+
+  coord_flip()+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),hjust=-0.2, fontface = "bold", size=5)+
+  theme_base()
+```
+```{r include=FALSE}
+ggplot(TABLA_EQUIPO_VISITANTE, aes(x=2, y=`Freq. Rel.`, fill=Categoría)) +
+  geom_bar(stat="identity", width=1, color="black") +
+  coord_polar("y", start=0)+
+  labs(fill="Equipo Visitante")+  #PARA CAMBIAR EL TÍTULO DE LAS CATEGORÍAS (LEGEND TITLE)
+  theme_void()+
+  geom_text(aes(label = percent(`Freq. Rel.`)),position = position_stack(vjust = 0.5),color = "white", size=5)+
+  xlim(0.5, 2.5)  #Y SE AGREGA ESTO
+```
+Se puede ver como en algunos equipos la cantidad de partidos jugados de local es diferente a la cantidad de partidos jugados de visitante, esto puedo explicarse por que han jugado la liguilla (Investigar a profundización)
+```{r echo=FALSE}
+merge(x = TABLA_EQUIPO_LOCAL[TABLA_EQUIPO_LOCAL$`Freq. Abs.` != TABLA_EQUIPO_VISITANTE$`Freq. Abs.`, c("Categoría","Freq. Abs.")] , y = TABLA_EQUIPO_VISITANTE[,c("Categoría","Freq. Abs.")], by = "Categoría", all.x = TRUE)
+
+```
+### Goles de Local y vistante
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_GOLES)
+```
+Se puede ver una distribución positiva de los datos en los que hay un sesgo negativo, esto tiene sentido pues cada gol implica un esfuerzo en el tiempo, son incrementales, por lo que lo usual es anotar una menor cantidad de goles.
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=LOCAL_GOLES))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Goles de Local")+
+    scale_y_continuous(limits = c(0,7))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=LOCAL_GOLES))+
+    labs(x="Goles de Local")+
+    geom_histogram(bins=7,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=VISITANTE_GOLES))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Goles de Visitante")+
+    scale_y_continuous(limits = c(0,7))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=VISITANTE_GOLES))+
+    labs(x="Goles de Visitante")+
+    geom_histogram(bins=7,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+### Resultado Final 
+
+Hay una marcada tendencia a que los equipos que son locales ganen los partidos.
+```{r echo=FALSE}
+TABLA_resultado_final =tabla_freq(base_filtrada$RESULTADO_FINAL,0)
+
+ggplot(TABLA_resultado_final, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Resultado Final",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=5)+
+  theme_base()
+```
+
+### Goles a mitad de tiempo para locales y visitantes
+
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_GOLES_MITAD)
+```
+
+```{r include=FALSE}
+descriptivas(base_filtrada$VISITANTE_GOLES_MITAD)
+```
+
+Normalmente los primeros tiempos acaban sin goles tanto en local como visitante.
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=LOCAL_GOLES_MITAD))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Goles de Local mitad de tiempo")+
+    scale_y_continuous(limits = c(0,4))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=LOCAL_GOLES_MITAD))+
+    labs(x="Goles de Local mitad de tiempo")+
+    geom_histogram(bins=4,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=VISITANTE_GOLES_MITAD))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Goles de Visitante mitad de tiempo")+
+    scale_y_continuous(limits = c(0,4))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=VISITANTE_GOLES_MITAD))+
+    labs(x="Goles de Visitante mitad de tiempo")+
+    geom_histogram(bins=4,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+### Resultado a mitad de tiempo 
+
+Podemos ver que en la primera mitad el partido termina en empate. por lo que podemos inferir que el partido se define sobre la segunda parte.
+```{r echo=FALSE}
+TABLA_resultado_medio =tabla_freq(base_filtrada$RESULTADO_MITAD,0)
+
+ggplot(TABLA_resultado_medio, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Resultado a mitad de tiempo",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=5)+
+  theme_base()
+```
+
+### Tiros totales para visitante y local
+
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_TIROS)
+```
+```{r include=FALSE}
+descriptivas(base_filtrada$VISITANTE_TIROS)
+```
+La distribución de los tiros tanto de local como visitante presenta una asimetria positiva. Ademas en promedio se presentan 7 u 8 tiros totales 
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=LOCAL_TIROS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Tiros totales de local")+
+    scale_y_continuous(limits = c(0,24))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=LOCAL_TIROS))+
+    labs(x="Tiros totales de local")+
+    geom_histogram(bins=24,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+
+
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=VISITANTE_TIROS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Tiros totales de visitante")+
+    scale_y_continuous(limits = c(0,22))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=VISITANTE_TIROS))+
+    labs(x="Tiros totales de visitante")+
+    geom_histogram(bins=22,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+### Tiros a puerta de local y visitante
+
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_TIROS_PUERTA)
+```
+```{r include=FALSE}
+descriptivas(base_filtrada$VISITANTE_TIROS_PUERTA)
+```
+
+La distribución de los tiros tanto de local como visitante presenta una asimetria positiva. Ademas en promedio se presentan 3 y 4 tiros totales 
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=LOCAL_TIROS_PUERTA))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Tiros a puerta de Local")+
+    scale_y_continuous(limits = c(0,14))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=LOCAL_TIROS_PUERTA))+
+    labs(x="Tiros a puerta de Local")+
+    geom_histogram(bins=14,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=VISITANTE_TIROS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Tiros a puerta de visitante")+
+    scale_y_continuous(limits = c(0,13))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=VISITANTE_TIROS))+
+    labs(x="Tiros a puerta de visitante")+
+    geom_histogram(bins=13,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+### Tiros de esquinas de local y visitante
+
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_CORNERS)
+```
+```{r include=FALSE}
+descriptivas(base_filtrada$VISITANTE_CORNERS)
+```
+
+La distribución de los tiros de esquinas tanto de local como visitante presenta una asimetria positiva. Ademas en promedio se presentan 3 o 4 tiros de esquinas 
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=LOCAL_CORNERS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Tiros de esquina de Local")+
+    scale_y_continuous(limits = c(0,15))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=LOCAL_CORNERS))+
+    labs(x="Tiros de esquina de Local")+
+    geom_histogram(bins=15,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=VISITANTE_CORNERS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Tiros de esquina de Visitante")+
+    scale_y_continuous(limits = c(0,15))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=VISITANTE_CORNERS))+
+    labs(x="Tiros de esquina de Visitante")+
+    geom_histogram(bins=15,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+### Tarjetas Amarillas
+
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_AMARILLAS)
+```
+
+```{r include=FALSE}
+descriptivas(base_filtrada$VISITANTE_AMARILLAS)
+```
+
+La distribución de las amarillas tanto de local como visitante presenta una asimetria positiva. Ademas en promedio se presentan 2 o 3 tarjetas amarillas
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=LOCAL_AMARILLAS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Amarillas de Local")+
+    scale_y_continuous(limits = c(0,7))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=LOCAL_AMARILLAS))+
+    labs(x="Amarillas de Local")+
+    geom_histogram(bins=7,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+
+```{r echo=FALSE}
+    #boxplot:
+  g1=ggplot(base_filtrada, aes(y=VISITANTE_CORNERS))+
+    geom_boxplot(fill="orange1")+
+    coord_flip()+
+    labs(y="Amarillas de Visitante")+
+    scale_y_continuous(limits = c(0,9))+
+    theme_base()+
+    theme(axis.text.y=element_blank(),axis.ticks.y=element_blank())
+
+  #histogram:
+  g2=ggplot(base_filtrada, aes(x=VISITANTE_CORNERS))+
+    labs(x="Amarillas de Visitante")+
+    geom_histogram(bins=9,color="black", fill="orange")+
+    theme_base()+
+    theme(axis.title.y=element_blank(),axis.text.y=element_blank(),axis.ticks.y=element_blank())
+  
+  grid.arrange(g1,g2)
+```
+
+### Tarjetas Rojas 
+
+```{r include=FALSE}
+descriptivas(base_filtrada$LOCAL_ROJAS)
+```
+
+Alrededor de una 1 Tarjeta roja se saca cada 10 partidos. 
+```{r include=FALSE}
+descriptivas(base_filtrada$VISITANTE_ROJAS)
+```
+```{r echo=FALSE}
+TABLA_rojas_local =tabla_freq(base_filtrada$LOCAL_ROJAS,0)
+
+ggplot(TABLA_rojas_local, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Rojas de local",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=5)+
+  theme_base()
+```
+
+```{r echo=FALSE}
+TABLA_rojas_Visitante =tabla_freq(base_filtrada$VISITANTE_ROJAS,0)
+
+ggplot(TABLA_rojas_Visitante, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Rojas de visitante",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=5)+
+  theme_base()
+```
+
+### Partidos con publico
+
+La mayor cantidad de partidos de las 3 temporadas se jugaron con publico.
+```{r echo=FALSE}
+TABLA_publico =tabla_freq(base_filtrada$Con_Publico,0)
+
+ggplot(TABLA_publico, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Partidos con Publico",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=5)+
+  theme_base()
+```
+
+### Equipos locales grandes
+
+Solo hay una minoria de los equipos locales que son grandes.
+```{r echo=FALSE}
+TABLA_equipo_grande =tabla_freq(base_filtrada$Es_equipo_local_grande,0)
+
+ggplot(TABLA_equipo_grande, aes(x=2, y=`Freq. Rel.`, fill=Categoría)) +
+  geom_bar(stat="identity", width=1, color="black") +
+  coord_polar("y", start=0)+
+  labs(fill="¿Es un equipo grande?")+  #PARA CAMBIAR EL TÍTULO DE LAS CATEGORÍAS (LEGEND TITLE)
+  theme_void()+
+  geom_text(aes(label = percent(`Freq. Rel.`)),position = position_stack(vjust = 0.5),color = "white", size=5)+
+  xlim(0.5, 2.5)  #Y SE AGREGA ESTO
+```
+
