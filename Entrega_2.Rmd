@@ -11,7 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ## Paquetes y funciones
 
-```{r echo=FALSE}
+```{r include=FALSE}
 library(car)
 library(nortest)
 library(corrplot)
@@ -563,3 +563,198 @@ ggplot(TABLA_equipo_grande, aes(x=2, y=`Freq. Rel.`, fill=Categoría)) +
   xlim(0.5, 2.5)  #Y SE AGREGA ESTO
 ```
 
+## Analisis Bivariado
+
+### Equipos vs Goles
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_GOLES))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Goles de Local")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,6),breaks = seq(0,6,1))
+
+
+   g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y=VISITANTE_GOLES))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Goles de Visitante")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,6),breaks = seq(0,6,1))
+   
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas de los goles por equipo",gp=gpar(fontsize=14)))
+
+```
+
+
+
+### Resultado VS Equipos
+
+```{r}
+  TABLA_resultado_local =as.data.frame(prop.table(table(base_filtrada$EQUIPO_LOCAL,base_filtrada$RESULTADO_FINAL),1))
+  
+  #grágica  
+  ggplot(TABLA_resultado_local, aes(x=Var1, y=Freq, fill=Var2))+
+  geom_bar(stat = "identity", color="black")+
+   labs(x="Equipos",y="Frecuencia", fill="Resultado Final")+
+  scale_fill_brewer(palette = "Greens")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=5)+
+  coord_flip()+
+  theme_base()+
+   theme(legend.position="bottom")
+```
+
+### Equipos vs Goles a medio tiempo
+
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_GOLES_MITAD))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Goles Local a \n mitad de tiempo")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,4),breaks = seq(0,4,1))
+
+   g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y=VISITANTE_GOLES_MITAD))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Goles Visitante a \n medio tiempo")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,4),breaks = seq(0,4,1))
+   
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas de los goles \n a mitad de tiempo por equipo",gp=gpar(fontsize=14)))
+
+```
+### Resultado a medio tiempo VS Equipos
+
+```{r echo= FALSE}
+  TABLA_resultado_local =as.data.frame(prop.table(table(base_filtrada$EQUIPO_LOCAL,base_filtrada$RESULTADO_MITAD),1))
+
+  #grágica  
+  ggplot(TABLA_resultado_local, aes(x=Var1, y=Freq, fill=Var2))+
+  geom_bar(stat = "identity", color="black")+
+   labs(x="Equipo",y="Frecuencia", fill="Resultado a mitad de tiempo")+
+  scale_fill_brewer(palette = "Greens")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=5)+
+  coord_flip()+
+  theme_base()+
+   theme(legend.position="bottom")
+```
+
+### Equipos vs Tiros totales
+
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_TIROS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Tiros totales de local")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,24),breaks = seq(0,25,5))
+   
+   g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y=VISITANTE_TIROS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Tiros totales de visitante")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,22),breaks = seq(0,25,5))
+    
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas tiros totales por equipo",gp=gpar(fontsize=14)))
+
+```
+### Equipos vs Tiros a puerta 
+
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_TIROS_PUERTA))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Tiros a puerta de Local")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,14),breaks = seq(0,14,2))
+
+    g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y=VISITANTE_TIROS_PUERTA))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Tiros a puerta de visitante")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,14),breaks = seq(0,14,2))
+
+    
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas tiros a puerta por equipo",gp=gpar(fontsize=14)))
+```
+
+
+
+### Equipos vs Tiros de esquina 
+
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_CORNERS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Tiros de esquina \n de Local")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,15),breaks = seq(0,16,2))
+
+    g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y= VISITANTE_CORNERS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Tiros de esquina \n de Visitante")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,15),breaks = seq(0,16,2))
+    
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas de \n tiros de esquina por equipo",gp=gpar(fontsize=14)))
+
+```
+
+
+### Equipos vs Amarillas
+
+
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_AMARILLAS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Tarjetas amarillas \n de Local")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,7),breaks = seq(0,7,1))
+
+    g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y= VISITANTE_AMARILLAS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Tarjetas amarillas \n de Visitante")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,9),breaks = seq(0,9,1))
+    
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas de \n tarjetas amarillas por equipo",gp=gpar(fontsize=14)))
+
+```
+
+### Equipos vs Rojas
+```{r}
+descriptivas(base_filtrada$LOCAL_ROJAS)
+```
+
+```{r echo=FALSE}
+   g1= ggplot(base_filtrada, aes(x=EQUIPO_LOCAL, y=LOCAL_ROJAS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Local",y="Tarjetas rojas \n de Local")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,2),breaks = seq(0,2,1))
+
+    g2= ggplot(base_filtrada, aes(x=EQUIPO_VISITANTE, y= VISITANTE_ROJAS))+
+    geom_boxplot(fill="steelblue")+
+    coord_flip()+
+    labs(x="Equipos de Visitante",y="Tarjetas rojas \n de Visitante")+
+    theme_base()+
+    scale_y_continuous(limits=c(0,2),breaks = seq(0,2,1))
+    
+    grid.arrange(g1,g2, ncol=2,top=textGrob("Diagrama de cajas de \n tarjetas rojas por equipo",gp=gpar(fontsize=14)))
+
+```
