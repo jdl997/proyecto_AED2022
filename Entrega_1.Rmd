@@ -568,9 +568,10 @@ tabla_variables <- data.frame (local[str_order(local, numeric = TRUE)], Visit[st
 knitr::kable(tabla_variables, "simple",   col.names = c('Equipos Locales', 'Equipos Visitantes'), align = "llc", caption = "Tabla. Comparación entre equipos de local y visitante")
 
 ```
+
 ## Valores inválidos o sin referencia en el diccionario de variables
 
-La unica anomalia de valores invalidos fue corregida en el punto #4 donde se encontraron valores de goles negativos lo cual no tiene sentido en el contexto.
+La unica anomalia de valores inválidos que encontramos, fue corregida al encontrar valores de goles negativos lo cual no tiene evidentemente sentido en el contexto.
 
 ## Valores inconsistentes
 
@@ -587,13 +588,14 @@ base_filtrada[(base_filtrada$LOCAL_GOLES > base_filtrada$VISITANTE_GOLES & base_
 
 # Creación de Variables
 
-Variable para saber si se jugo con publico por la pandemia
+Creamos una Variable para saber si el partido se jugó sin público por las medidas aplicadas durante la pandemia.  
 ```{r}
-base_filtrada$Con_Publico = ifelse(base_filtrada$FECHA >= as.Date("2020-03-01") & base_filtrada$FECHA < as.Date("2020-10-24"), "NO", "SI")
+base_filtrada$Con_Publico = ifelse(base_filtrada$FECHA > as.Date("2020-07-09") & base_filtrada$FECHA < as.Date("2021-07-24"), "NO", "SI")
 ```
 
-Se decide crear la variable sintetica "Es_equipo_grande" el cual es un indicador de si un equipo es de renombre. Esta variable se calcula a partir de la cantidad de titulos obtenidos. [Estadisticas](https://es.wikipedia.org/wiki/Superliga_de_Grecia#T%C3%ADtulos_por_club)
+Se decide crear la variable sintética "Es_equipo_grande" la cual es un indicador de si un equipo es de renombre. Esta variable se calcula a partir de la cantidad de títulos obtenidos. [Estadisticas](https://es.wikipedia.org/wiki/Superliga_de_Grecia#T%C3%ADtulos_por_club)
 ![](titulos.png)
+
 ```{r}
 equipos_grandes = c("Olympiakos", "Panathinaikos", "AEK", "PAOK", "Aris")
 base_filtrada$Es_equipo_local_grande = ifelse(base_filtrada$EQUIPO_LOCAL %in% equipos_grandes, "SI", "NO")
