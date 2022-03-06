@@ -373,7 +373,7 @@ TABLA_resultado_publico_noTop$Var1 =   factor(TABLA_resultado_publico_top$Var1, 
 
 g2 = ggplot(TABLA_resultado_publico_noTop, aes(x=Var1, y=Freq, fill=Var2))+
   geom_bar(stat = "identity", color="black")+
-  labs(x="Con Público",y="Frecuencia", fill="Resultado Final", title = "Equipos no grandes")+
+  labs(x="Con Público",y="Frecuencia", fill="Resultado Final", title = "Equipos chicos")+
   scale_fill_brewer(palette = "Greens")+
   scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
   geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
@@ -422,19 +422,73 @@ grid.arrange(g1,g2, ncol=1,top=textGrob("Frecuencias de triunfo \n de equipos gr
 ```
 
 
-```{r}
-ggplot(base_filtrada, aes(x=LOCAL_GOLES, fill=Con_Publico))+
+```{r Goles Local, echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+g0 <- ggplot(base_filtrada, aes(x=LOCAL_GOLES, fill=Con_Publico))+
     geom_density(alpha=0.5)+
-    labs(x="Goles de local", fill="Partido con publico")+
-    theme_base()
+    labs(x="Goles anotados jugando de local", fill="Asistencia de público")+
+    theme_igray(base_size = 10, base_family = "")+
+     theme(legend.position="bottom")+
+  geom_vline(aes(xintercept=mean(LOCAL_GOLES)), color="gold", linetype="dashed", size=1)+
+scale_fill_brewer(palette="Set3")
 
-grid.arrange(g1,g2, ncol=1,top=textGrob("Frecuencias de triunfo \n de equipos grandes",gp=gpar(fontsize=14)))
+ base_equipos_top$Con_Publico= factor(base_equipos_top$Con_Publico, levels= c("SI","NO"))
+ base_equipos_Notop$Con_Publico= factor(base_equipos_Notop$Con_Publico, levels= c("SI","NO"))
+
+  
+  g1= ggplot(base_equipos_top, aes(x=Con_Publico, y=LOCAL_GOLES))+
+    geom_boxplot(fill="gold")+
+    labs(x="Asistencia de público",y="Goles anotados de local", title= "Equipo grande")+
+    scale_y_continuous(limits=c(0,7),breaks = seq(0,7,1))+
+    theme_igray(base_size = 10, base_family = "")+
+     theme(legend.position="bottom")
+  
+  g2= ggplot(base_equipos_Notop, aes(x=Con_Publico, y=LOCAL_GOLES))+
+    geom_boxplot(fill="gold")+
+    labs(x="Asistencia de público",y="Goles anotados de local", title= "Equipo chico")+
+    scale_y_continuous(limits=c(0,7),breaks = seq(0,7,1))+
+    theme_igray(base_size = 10, base_family = "")+
+     theme(legend.position="bottom")
+  
+lay <- rbind(c(1,1),
+             c(2,3))
+
+grid.arrange(g0, g1, g2, ncol=2,top=textGrob("Goles anotados por partido de local"),layout_matrix = lay)
+
 
 ```
+Cómo se puede observar en las anteriores gráficas al revisar la variable de goles de local, si bien no se presentó una variación importante en la media de goles por partido, al revisar en detalle usando la variable de reputación de los equipos pudimos encontrar que los equipos locales anotaron menos goles durante los partidos jugados cuando los fanáticos estuvieron ausentes.
 
 
+## Resultados del dominio del juego
 
-## Resultados de juego
+
+```{r}
+g0 = ggplot(base_filtrada, aes(x=Con_Publico, y=LOCAL_TIROS_PUERTA))+
+    geom_boxplot(fill="steelblue")+
+    labs(x="Presencia de publico",y="Tiros a puerta de local")+
+    theme_igray(base_size = 10, base_family = "")+
+     theme(legend.position="bottom")
+
+g1= ggplot(base_equipos_top, aes(x=Con_Publico, y=LOCAL_TIROS_PUERTA))+
+    geom_boxplot(fill="steelblue")+
+    labs(x="Asistencia de publico",y="Tiros a puerta de local", title= "Equipo grande")+
+    scale_y_continuous(limits=c(0,14),breaks = seq(0,14,2))+
+    theme_igray(base_size = 10, base_family = "")+
+     theme(legend.position="bottom")
+
+  g2= ggplot(base_equipos_Notop, aes(x=Con_Publico, y=LOCAL_TIROS_PUERTA))+
+    geom_boxplot(fill="steelblue")+
+    labs(x="Asistencia de publico",y="Tiros a puerta de local", title= "Equipo chico")+
+    scale_y_continuous(limits=c(0,14),breaks = seq(0,14,2))+
+    theme_igray(base_size = 10, base_family = "")+
+     theme(legend.position="bottom")
+  
+lay <- rbind(c(1,1),
+             c(2,3))
+
+grid.arrange(g0, g1, g2, ncol=2,top=textGrob("Tiros a puerta"),layout_matrix = lay)
+
+```
 
 
 
