@@ -56,7 +56,7 @@ descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1e
 
 tabla_freq<- function(x,total=1,na="ifany"){
   if (total==1) {
-    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    M=data.frame("Categoria"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
   names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
   M$Categoria=as.character(M$Categoria)
   M[nrow(M)+1,]=c("Total",sum(M$`Freq. Abs.`),sum(M$`Freq. Rel.`))
@@ -64,8 +64,8 @@ tabla_freq<- function(x,total=1,na="ifany"){
   M$`Freq. Abs.`=as.numeric(M$`Freq. Abs.`)
   M
   } else{
-    M=data.frame("Categoría"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
-    names(M)=c("Categoría","Freq. Abs.","Freq. Rel.")
+    M=data.frame("Categoria"=table(x, useNA = na), "Rel"=prop.table(table(x,useNA = na)))[,-3]
+    names(M)=c("Categoria","Freq. Abs.","Freq. Rel.")
     M
   }
 }
@@ -183,7 +183,7 @@ Al unir las fuentes con los partidos disputados en las tres temporadas obtuvimos
 
 De acuerdo con el análisis de las diferencias de estructura entre las bases y la investigación sobre la Superliga de Grecia, determinamos que las siguientes `r ncol(base_filtrada)` columnas constituyen el grupo de variables de interés para el presente proyecto de analítica y sobre ellas desarrollamos las actividades de limpieza y preparación de los datos.
 
-```{r echo=FALSE}
+```{r Variables Fuente, echo=FALSE, message=FALSE, warning=FALSE}
 
 # declaring the columns of data frame
 # assigning new names to the columns of the data frame
@@ -199,7 +199,12 @@ rango_categorias = c( paste(format(min(base_filtrada$FECHA),"%d-%m-%Y"),format(m
 paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_FINAL), sep = ", "), paste(min(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES_MITAD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE),max(base_filtrada$VISITANTE_GOLES_MITAD, na.rm = TRUE), sep = " a "), collapse(unique(base_filtrada$RESULTADO_MITAD), ", "), paste(min(base_filtrada$LOCAL_TIROS, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_PUERTA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$LOCAL_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE),max(base_filtrada$VISITANTE_TIROS_LIBRES, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_CORNERS, na.rm = TRUE),max(base_filtrada$LOCAL_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE),max(base_filtrada$VISITANTE_CORNERS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE),max(base_filtrada$LOCAL_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE),max(base_filtrada$VISITANTE_AMARILLAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$LOCAL_ROJAS, na.rm = TRUE),max(base_filtrada$LOCAL_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE),max(base_filtrada$VISITANTE_ROJAS, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$Bb1X2, na.rm = TRUE),max(base_filtrada$Bb1X2, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxH, na.rm = TRUE),max(base_filtrada$BbMxH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxD, na.rm = TRUE),max(base_filtrada$BbMxD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvH, na.rm = TRUE),max(base_filtrada$BbAvH, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvD, na.rm = TRUE),max(base_filtrada$BbAvD, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbMxA, na.rm = TRUE),max(base_filtrada$BbMxA, na.rm = TRUE), sep = " a "), paste(min(base_filtrada$BbAvA, na.rm = TRUE),max(base_filtrada$BbAvA, na.rm = TRUE), sep = " a ") )
 
 tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
-knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Tabla. Descripción de las Variables para el análisis")
+
+knitr::kable(tabla_variables, booktabs=T,  longtable = T,format = "latex" , escape = TRUE, col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Variables de la fuente de datos" ) %>%
+kable_styling(latex_options = c("repeat_header", "hold_position"), font_size = 7) %>%
+  column_spec(1,width = "14em") %>%
+  column_spec(2,width = "9em") %>%
+  column_spec(3,width = "15em")
 
 
 
@@ -211,11 +216,9 @@ Identificada la estructura de datos sobre la cual trabajaremos el proyecto, real
 - Nueve de las columnas candidatas no aportaban información suficiente debido a que contenían valores vacíos en más del 66% de los registros.
 - Algunos registros con campos vacíos o con valores inconsistentes y atípicos pudieron ser corregidos gracias a que pudimos imputarlos a través de información adicional levantada en la fuente original.
 
-Adicionalmente, sumamos dos variables a la base de datos del análisis, a fin de consolidar información que  será relevante en las siguientes tareas del proyecto de analítica.  La primera variable permite identificar si el partido se jugó durante el período de ausencia de público y la segunda clasifica el nivel del equipo que juega de local en función de la historia de títulos obtenidos.
+Adicionalmente, sumamos dos variables a la base de datos del análisis, a fin de consolidar información que  será relevante en las siguientes tareas del proyecto de analítica.  La primera variable permite identificar si el partido se jugó durante el período de ausencia de público y la segunda clasifica a los equipos que juegan de local en función de la reputación por los títulos obtenidos.
 
-
-\begin{table}
-```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
 ## Carga y preparación de los dats
 load("BDEntrega1.RData")
 
@@ -231,31 +234,207 @@ paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES
 
 tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
 
-knitr::kable(tabla_variables, format = "latex", escape = TRUE, "simple", booktabs=T,   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc" ) %>%
-  column_spec(1,width = "9em") %>%
+knitr::kable(tabla_variables, booktabs=T,  longtable = T,format = "latex" , escape = TRUE, col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Variables para el análisis" ) %>%
+kable_styling(latex_options = c("repeat_header", "hold_position"), font_size = 7) %>%
+  column_spec(1,width = "14em") %>%
   column_spec(2,width = "9em") %>%
-  column_spec(3,width = "18em")
-
+  column_spec(3,width = "15em")
 ```
-\end{table}
 
-\clearpage
+\newpage
 
 # Resultados de la exploración de datos
 
-## Análisis univariado
+## Resultados de juego
 
-```{r echo=FALSE}
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
 
+TABLA_resultado_medio =tabla_freq(base_filtrada$RESULTADO_MITAD,0)
+TABLA_resultado_medio$Categoria = factor(TABLA_resultado_medio$Categoria, levels = c("Local", "Empate", "Visitante"))
+
+g1= ggplot(TABLA_resultado_medio, aes(x=Categoria, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="darkmagenta", color="black")+
+  labs(x="Resultados parciales a mitad de juego",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoria, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=3)+
+  theme_igray(base_size = 10, base_family = "")
+  
+
+TABLA_resultado_final =tabla_freq(base_filtrada$RESULTADO_FINAL,0)
+TABLA_resultado_final$Categoria = factor(TABLA_resultado_final$Categoria, levels = c("Local", "Empate", "Visitante"))
+
+g2= ggplot(TABLA_resultado_final, aes(x=Categoria, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="forestgreen", color="black")+
+  labs(x="Resultados Finales",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoria, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),vjust=-0.5, fontface = "bold", size=3)+
+  theme_igray(base_size = 10, base_family = "")
+
+## Crear variable de GANAR LOCAL
 base_filtrada$GANA_LOCAL= ifelse(base_filtrada$RESULTADO_FINAL == "Local", "SI", "NO")
-TABLA_EQUIPO_LOCAL =tabla_freq(base_filtrada$RESULTADO_FINAL,0)
-ggplot(TABLA_EQUIPO_LOCAL, aes(x=Categoría, y=`Freq. Rel.`))+
-  geom_bar(stat = "identity", fill="steelblue", color="black")+
-  labs(x="Resultado Final",y="Frecuencia")+
-  scale_y_continuous(limits = c(0,ifelse(max(TABLA_EQUIPO_LOCAL$`Freq. Rel.`)>0.5,1,0.5)), breaks = seq(0,ifelse(max(TABLA_EQUIPO_LOCAL$`Freq. Rel.`)>0.5,1,0.5),0.1), labels = percent)+
-  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),hjust=-0.2, fontface = "bold", size=5)+
-  theme_base()
 
+TABLA_EQUIPO_LOCAL =tabla_freq(base_filtrada$GANA_LOCAL,0)
+TABLA_EQUIPO_LOCAL$Categoria = factor(TABLA_EQUIPO_LOCAL$Categoria, levels = c("SI", "NO"))
+
+g3 <- ggplot(TABLA_EQUIPO_LOCAL, aes(x=Categoria, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="springgreen4", color="black")+
+  labs(x="Triunfo del equipo local",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Categoria, y=`Freq. Rel.`, label=percent(`Freq. Rel.`, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
+theme_igray(base_size = 10, base_family = "")
+
+lay <- rbind(c(1,2),
+             c(3,3))
+
+grid.arrange(g2, g1, g3, ncol=2,top=textGrob("Frecuencia de resultados de juego"),layout_matrix = lay)
 
 ```
+
+
+Al analizar la variable resultado final, observamos que en la Súperliga de Grecia predomina la tasa de triunfo de los equipos locales sobre la de los equipos visitantes.  Adicionalmente, revisando la variable de resultado parcial, observamos que hay una alta tasa de empates en la primera mitad de los encuentros, que nos permite suponer que la ventaja de local tiende a ser mayor hacia la segunda mitad del partido.
+
+Para concentrarnos en analizar el efecto de la asistencia o no de público a los partidos sobre los triunfos de los equipos en sus juegos de local, generamos una nueva variable de observación en la que consolidamos los triunfos de los equipos locales, sin discriminar los empates o victorias del equipo visitante.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+
+TABLA_X = as.data.frame(prop.table(table(base_filtrada$Con_Publico , base_filtrada$GANA_LOCAL),1))
+  # Reorder following the value of another column:
+TABLA_X$Var1 =   factor(TABLA_X$Var1, levels = c("SI", "NO"))
+  
+g0 <- ggplot(TABLA_X, aes(x=Var1, y=Freq, fill=Var2))+
+    geom_bar(stat = "identity", color="black")+
+    labs(x="Asistencia de Público",y="Frecuencia", fill="Triunfo del equipo local")+
+    scale_fill_brewer(palette = "Greens")+
+    scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+    geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
+    theme_igray(base_size = 10, base_family = "")
+
+
+
+base_filtrada$RESULTADO_FINAL= factor(base_filtrada$RESULTADO_FINAL, levels= c("Local","Empate","Visitante"))
+base_filtrada$RESULTADO_MITAD= factor(base_filtrada$RESULTADO_MITAD, levels= c("Local","Empate","Visitante"))
+
+TABLA_X = as.data.frame(prop.table(table(base_filtrada$Con_Publico , base_filtrada$RESULTADO_MITAD),1))
+  # Reorder following the value of another column:
+TABLA_X$Var2 =   factor(TABLA_X$Var2, levels = c("Visitante", "Empate", "Local"))
+TABLA_X$Var1 =   factor(TABLA_X$Var1, levels = c("SI", "NO"))
+  
+g1= ggplot(TABLA_X, aes(x=Var1, y=Freq, fill=Var2))+
+    geom_bar(stat = "identity", color="black")+
+    labs(x="Asistencia de público",y="Frecuencia", fill="Resultado parcial")+
+    scale_fill_brewer(palette = "BuPu")+
+    scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+    geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
+    theme_igray(base_size = 10, base_family = "")
+
+TABLA_Y = as.data.frame(prop.table(table(base_filtrada$Con_Publico , base_filtrada$RESULTADO_FINAL),1))
+  # Reorder following the value of another column:
+TABLA_Y$Var2 =   factor(TABLA_Y$Var2, levels = c("Visitante", "Empate", "Local"))
+TABLA_Y$Var1 =   factor(TABLA_Y$Var1, levels = c("SI", "NO"))
+  
+g2= ggplot(TABLA_Y, aes(x=Var1, y=Freq, fill=Var2))+
+    geom_bar(stat = "identity", color="black")+
+    labs(x="Asistencia de público",y="Frecuencia", fill="Resultado final")+
+    scale_fill_brewer(palette = "Greens")+
+    scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+    geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
+    theme_igray(base_size = 10, base_family = "")
+
+
+lay <- rbind(c(1,1),
+             c(2,3))
+
+grid.arrange(g0, g2, g1, ncol=2,top=textGrob("Frecuencia de resultados de juego según la asistencia de público"),layout_matrix = lay)
+
+```
+Cuando incorporamos la variable que nos permite identificar si el partido se jugó durante el período de ausencia de público, observamos que se presentó una notable variación en la tasa de éxito por parte de los equipos locales la cual disminuyó un 23.6% cuando no se presentaron aficionados.  De manera consistente, se observa esta disminución sobre los resultados parciales a favor del local durante la primera mitad de juego, así como, un incremento en las tasas de victorias (+17.9%) y empates (+26.6%) por parte de los equipos visitantes.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=TRUE}
+base_equipos_top = base_filtrada[base_filtrada$Es_equipo_local_grande == "SI" , ] 
+base_equipos_Notop = base_filtrada[base_filtrada$Es_equipo_local_grande == "NO" , ] 
+
+## Resultado de partido con y sin publico, siendo o no grande
+TABLA_resultado_publico_top = as.data.frame(prop.table(table(base_equipos_top$Con_Publico , base_equipos_top$RESULTADO_FINAL),1))
+
+TABLA_resultado_publico_top$Var2 =   factor(TABLA_resultado_publico_top$Var2, levels = c("Visitante", "Empate", "Local"))
+TABLA_resultado_publico_top$Var1 =   factor(TABLA_resultado_publico_top$Var1, levels = c("SI", "NO"))
+g1 = ggplot(TABLA_resultado_publico_top, aes(x=Var1, y=Freq, fill=Var2))+
+  geom_bar(stat = "identity", color="black")+
+  labs(x="Con Público",y="Frecuencia", fill="Resultado Final", title = "Equipos grandes")+
+  scale_fill_brewer(palette = "Greens")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
+  theme_igray(base_size = 10, base_family = "")
+
+TABLA_resultado_publico_noTop = as.data.frame(prop.table(table(base_equipos_Notop$Con_Publico , base_equipos_Notop$RESULTADO_FINAL),1))
+
+TABLA_resultado_publico_noTop$Var2 =   factor(TABLA_resultado_publico_top$Var2, levels = c("Visitante", "Empate", "Local"))
+TABLA_resultado_publico_noTop$Var1 =   factor(TABLA_resultado_publico_top$Var1, levels = c("SI", "NO"))
+
+g2 = ggplot(TABLA_resultado_publico_noTop, aes(x=Var1, y=Freq, fill=Var2))+
+  geom_bar(stat = "identity", color="black")+
+  labs(x="Con Público",y="Frecuencia", fill="Resultado Final", title = "Equipos no grandes")+
+  scale_fill_brewer(palette = "Greens")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=3)+
+  theme_igray(base_size = 10, base_family = "")
+
+grid.arrange(g1,g2, ncol=2,top=textGrob("Frecuencias de resultado de juego según la reputación de los equipos"))
+```
+Cuando incorporamos la variable que nos permite clasificar la reputación de los equipos al análisis exploratorio sobre los resultados, observamos que la variación en la tasa de éxito por parte de los equipos locales se dió en igual proporción, 26.5% sobre los equipos grandes cuando no se presentaron aficionados, y 26.6% sobre los equipos chicos durante este mismo periodo de tiempo.
+
+```{r eval=FALSE, message=FALSE, warning=FALSE, include=FALSE, paged.print=TRUE}
+### ANalizamos el desempeño de los equipos grandes
+#### NO consideramos que aporte insgigths para el informe 
+
+base_filtrada$GANA_LOCAL= ifelse(base_filtrada$RESULTADO_FINAL == "Local", "SI", "NO")
+
+base_equipos_top = base_filtrada[base_filtrada$Es_equipo_local_grande == "SI" , ] 
+base_equipos_top$EQUIPO_LOCAL = factor(base_equipos_top$EQUIPO_LOCAL)
+base_equipos_Notop = base_filtrada[base_filtrada$Es_equipo_local_grande == "NO" , ]
+base_equipos_Notop$EQUIPO_LOCAL = factor(base_equipos_Notop$EQUIPO_LOCAL)
+
+TABLA_X = as.data.frame(prop.table(table(base_equipos_top$EQUIPO_LOCAL, base_equipos_top$GANA_LOCAL),1))
+
+  g1= ggplot(TABLA_X, aes(x=Var1, y=Freq, fill=Var2))+
+  geom_bar(stat = "identity", color="black", width= 0.40)+
+   labs(x="Equipo",y="Frecuencia", fill="Equipo grande \n gana Local?" )+
+  scale_fill_brewer(palette = "Reds")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=5)+
+  coord_flip()+
+  theme_igray(base_size = 10, base_family = "")+
+   theme(legend.position="bottom")
+  
+  TABLA_Y = as.data.frame(prop.table(table(base_equipos_Notop$EQUIPO_LOCAL , base_equipos_Notop$GANA_LOCAL),1))
+
+    g2= ggplot(TABLA_Y, aes(x=Var1, y=Freq, fill=Var2))+
+  geom_bar(stat = "identity", color="black", width= 2)+
+  labs(x="Equipo",y="Frecuencia", fill="Equipo no grande \n gana Local?")+
+  scale_fill_brewer(palette = "Greens")+
+  scale_y_continuous(limits = c(0,1), breaks = seq(0,1,0.2), labels = percent)+
+  geom_text(aes(x=Var1, y=Freq, label=percent(Freq, accuracy = 0.1)), position= position_stack(vjust = 0.5), fontface = "bold", size=5)+
+  coord_flip()+
+  theme_igray(base_size = 10, base_family = "")+
+   theme(legend.position="bottom")
+
+grid.arrange(g1,g2, ncol=1,top=textGrob("Frecuencias de triunfo \n de equipos grandes",gp=gpar(fontsize=14)))
+```
+
+
+```{r}
+ggplot(base_filtrada, aes(x=LOCAL_GOLES, fill=Con_Publico))+
+    geom_density(alpha=0.5)+
+    labs(x="Goles de local", fill="Partido con publico")+
+    theme_base()
+
+grid.arrange(g1,g2, ncol=1,top=textGrob("Frecuencias de triunfo \n de equipos grandes",gp=gpar(fontsize=14)))
+
+```
+
+
+
+## Resultados de juego
+
+
 
