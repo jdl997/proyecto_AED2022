@@ -1,29 +1,6 @@
 ---
 output: pdf_document
 fontsize: 12pt
-geometry: margin=0.3in
-header-includes:
-- \usepackage[T1]{fontenc}
-- \usepackage{array}
-- \usepackage{booktabs}
-- \usepackage{xcolor}
-- \usepackage{makecell}
-- \usepackage{longtable}
-- \usepackage{multirow}
-- \usepackage{wrapfig}
-- \usepackage{float}
-- \usepackage{colortbl}
-- \usepackage{pdflscape}
-- \usepackage{tabu}
-- \usepackage{threeparttable}
-- \usepackage{threeparttablex}
-- \usepackage[normalem]{ulem}
-- \usepackage{hyperref}
-- \setmainfont{Helvetica}
-- \pagenumbering{gobble}
-- \DeclareTextCommand{\nobreakspace}{TU}{\leavevmode\nobreak\ }
-documentclass: article
-classoption: a4paper
 ---
 
 \begin{titlepage}
@@ -66,12 +43,14 @@ library(inspectdf)
 library(VIM)
 library(GGally)
 library(stringr)
-library(xtable) #este no lo tienen
+library(xtable) 
 library(mice)
 library(BBmisc)
 library(janitor)
 library(stringr)
-
+library(tinytex)
+library(tinytest)
+library(kableExtra)
 
 descriptivas<- function(x){data.frame("MEDIDA"=c("Observaciones", "Mínimo", "1er Q", "Media", "Mediana", "Desv Est", "3er Q", "Máximo", "Asimetría", "Curtosis", "atípico leve<", "atípico leve>","atípico extremo<","atípico extremo>", "Err Est Media", "IC(95%) Media Up", "IC(95%) Media Down"),"VALOR"=format(c(length(na.omit(x)), min(na.omit(x)), quantile(na.omit(x), prob=0.25), mean(na.omit(x)), median(na.omit(x)), sd(na.omit(x)), quantile(na.omit(x), prob=0.75), max(na.omit(x)), skewness(na.omit(x)), kurtosis(na.omit(x)), (2.5*quantile(na.omit(x),prob=0.25)-1.5*quantile(na.omit(x), prob=0.75)),(2.5*quantile(na.omit(x),prob=0.75)-1.5*quantile(na.omit(x), prob=0.25)),(4*quantile(na.omit(x),prob=0.25)-3*quantile(na.omit(x), prob=0.75)),(4*quantile(na.omit(x),prob=0.75)-3*quantile(na.omit(x), prob=0.25)), ((sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))+1.96*(sd(na.omit(x))/sqrt(length(na.omit(x))))), (mean(na.omit(x))-1.96*((sd(na.omit(x))/sqrt(length(na.omit(x))))))), scientific = F))}
 
@@ -222,6 +201,8 @@ paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES
 tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
 knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc", caption = "Tabla. Descripción de las Variables para el análisis")
 
+
+
 ```
 # Limpieza y preparación
 
@@ -232,9 +213,9 @@ Identificada la estructura de datos sobre la cual trabajaremos el proyecto, real
 
 Adicionalmente, sumamos dos variables a la base de datos del análisis, a fin de consolidar información que  será relevante en las siguientes tareas del proyecto de analítica.  La primera variable permite identificar si el partido se jugó durante el período de ausencia de público y la segunda clasifica el nivel del equipo que juega de local en función de la historia de títulos obtenidos.
 
-begin{table}[H]
-caption{Tabla. Descripción de las Variables para el análisis}
-```{r echo=FALSE}
+
+\begin{table}
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 ## Carga y preparación de los dats
 load("BDEntrega1.RData")
 
@@ -250,8 +231,31 @@ paste(min(base_filtrada$LOCAL_GOLES, na.rm = TRUE),max(base_filtrada$LOCAL_GOLES
 
 tabla_variables <- data.frame (columnas, Tipo_variables, rango_categorias)
 
-knitr::kable(tabla_variables, "simple",   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc")
+knitr::kable(tabla_variables, format = "latex", escape = TRUE, "simple", booktabs=T,   col.names = c('Variable', 'Tipo de variable', 'Rango / Categorías'), align = "llc" ) %>%
+  column_spec(1,width = "9em") %>%
+  column_spec(2,width = "9em") %>%
+  column_spec(3,width = "18em")
+
+```
+\end{table}
+
+\clearpage
+
+# Resultados de la exploración de datos
+
+## Análisis univariado
+
+```{r echo=FALSE}
+
+base_filtrada$GANA_LOCAL= ifelse(base_filtrada$RESULTADO_FINAL == "Local", "SI", "NO")
+TABLA_EQUIPO_LOCAL =tabla_freq(base_filtrada$RESULTADO_FINAL,0)
+ggplot(TABLA_EQUIPO_LOCAL, aes(x=Categoría, y=`Freq. Rel.`))+
+  geom_bar(stat = "identity", fill="steelblue", color="black")+
+  labs(x="Resultado Final",y="Frecuencia")+
+  scale_y_continuous(limits = c(0,ifelse(max(TABLA_EQUIPO_LOCAL$`Freq. Rel.`)>0.5,1,0.5)), breaks = seq(0,ifelse(max(TABLA_EQUIPO_LOCAL$`Freq. Rel.`)>0.5,1,0.5),0.1), labels = percent)+
+  geom_text(aes(x=Categoría, y=`Freq. Rel.`, label=percent(`Freq. Rel.`)),hjust=-0.2, fontface = "bold", size=5)+
+  theme_base()
 
 
 ```
-end{table}
+
